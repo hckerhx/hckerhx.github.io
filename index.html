@@ -1,75 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Investment Goals vs Reality</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #1e3a8a;
-      color: white;
-      text-align: center;
-      padding: 2rem 1rem;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
-    }
-    .container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    .goal {
-      font-weight: bold;
-      color: #15803d;
-      margin-bottom: 0.5rem;
-    }
-    .reality {
-      color: #b91c1c;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro 季度销售额天气影响分析系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <header>
-    <h1>My Investment Goals vs Reality</h1>
-  </header>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-store"></i>
+                    <h1>Metro 天气影响分析</h1>
+                </div>
+                <p class="subtitle">分析加拿大Metro零售商季度销售额受极端天气事件的影响</p>
+            </div>
+        </div>
+    </header>
 
-  <main class="container">
-    <div class="card">
-      <div class="goal">💰 Goal: Save $10,000 this year</div>
-      <div class="reality">📉 Reality: Saved $4,200 so far</div>
-    </div>
+    <main class="main">
+        <div class="container">
+            <!-- 时间选择区域 -->
+            <section class="time-selector-section">
+                <div class="card">
+                    <h2><i class="fas fa-calendar-alt"></i> 选择分析时间范围</h2>
+                    <form class="time-form" id="timeForm">
+                        <div class="form-group">
+                            <label for="startDate">开始时间：</label>
+                            <input type="date" id="startDate" name="startDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="endDate">结束时间：</label>
+                            <input type="date" id="endDate" name="endDate" required>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-search"></i> 开始分析
+                        </button>
+                    </form>
+                    
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i>
+                        <p>系统将自动识别所选时间范围内的季度，并分析相应的极端天气事件对Metro销售额的影响。</p>
+                    </div>
+                </div>
+            </section>
 
-    <div class="card">
-      <div class="goal">📈 Goal: 12% annual return</div>
-      <div class="reality">📉 Reality: Market gave me ~6%</div>
-    </div>
+            <!-- 分析结果区域 -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <!-- 季度信息卡片 -->
+                <div class="card">
+                    <h2><i class="fas fa-chart-line"></i> 季度分析结果</h2>
+                    <div class="quarter-info" id="quarterInfo">
+                        <!-- 季度信息将在这里动态生成 -->
+                    </div>
+                </div>
 
-    <div class="card">
-      <div class="goal">🏠 Goal: Invest in real estate by 2025</div>
-      <div class="reality">📉 Reality: Still building down payment</div>
-    </div>
+                <!-- 天气事件影响 -->
+                <div class="card">
+                    <h3><i class="fas fa-cloud-rain"></i> 极端天气事件影响</h3>
+                    <div class="weather-events" id="weatherEvents">
+                        <!-- 天气事件列表将在这里动态生成 -->
+                    </div>
+                </div>
 
-    <div class="card">
-      <div class="goal">🌍 Goal: Diversify into global ETFs</div>
-      <div class="reality">📉 Reality: Mostly in Canadian equities</div>
-    </div>
-  </main>
+                <!-- 销售额趋势图表 -->
+                <div class="card">
+                    <h3><i class="fas fa-chart-area"></i> 销售额趋势分析</h3>
+                    <div class="chart-container">
+                        <canvas id="salesChart" style="height: 400px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- 天气影响对比 -->
+                <div class="card">
+                    <h3><i class="fas fa-balance-scale"></i> 天气影响对比分析</h3>
+                    <div class="chart-container">
+                        <canvas id="weatherImpactChart" style="height: 350px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- 详细统计数据 -->
+                <div class="card">
+                    <h3><i class="fas fa-table"></i> 详细统计数据</h3>
+                    <div class="stats-grid" id="statsGrid">
+                        <!-- 统计数据将在这里动态生成 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 加载状态 -->
+            <section class="loading-section" id="loadingSection" style="display: none;">
+                <div class="card text-center">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <h3>正在分析数据...</h3>
+                    <p>请稍候，系统正在处理您的请求并生成分析报告。</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Metro 天气影响分析系统. 专为加拿大Metro零售商设计的数据分析工具.</p>
+        </div>
+    </footer>
+
+    <script src="js/weather-data.js"></script>
+    <script src="js/sales-calculator.js"></script>
+    <script src="js/chart-utils.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
