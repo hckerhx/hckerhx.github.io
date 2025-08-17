@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investment Goals vs Reality</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #1e3a8a;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .goal {
+      font-weight: bold;
+      color: #15803d;
+      margin-bottom: 0.5rem;
+    }
+    .reality {
+      color: #b91c1c;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Investment Goals vs Reality</h1>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <div class="goal">💰 Goal: Save $10,000 this year</div>
+      <div class="reality">📉 Reality: Saved $4,200 so far</div>
+    </div>
+
+    <div class="card">
+      <div class="goal">📈 Goal: 12% annual return</div>
+      <div class="reality">📉 Reality: Market gave me ~6%</div>
+    </div>
+
+    <div class="card">
+      <div class="goal">🏠 Goal: Invest in real estate by 2025</div>
+      <div class="reality">📉 Reality: Still building down payment</div>
+    </div>
+
+    <div class="card">
+      <div class="goal">🌍 Goal: Diversify into global ETFs</div>
+      <div class="reality">📉 Reality: Mostly in Canadian equities</div>
+    </div>
+  </main>
+</body>
+</html>
