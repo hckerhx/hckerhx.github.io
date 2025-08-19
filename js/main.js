@@ -146,8 +146,12 @@ class MetroWeatherAnalyzer {
         const analysisResults = [];
         
         for (const quarter of quarters) {
+     
             // Generate weather events
-            const weatherEvents = this.weatherManager.generateWeatherEvents(quarter);
+            const weatherEvents = await this.weatherManager.fetchWeatherEvents(
+                quarter.startDate,
+                quarter.endDate
+            );
             
             // Calculate sales impact
             const baseSales = this.salesCalculator.calculateBaseSales(quarter, quarter.year);
