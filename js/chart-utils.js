@@ -1,6 +1,6 @@
 /**
- * 图表工具模块
- * 使用Chart.js创建各种数据可视化图表
+ * Chart utilities module
+ * Uses Chart.js to create various data visualizations
  */
 
 class ChartUtils {
@@ -24,19 +24,19 @@ class ChartUtils {
     }
 
     /**
-     * 创建销售趋势图表
+     * Create sales trend chart
      */
     createSalesChart(canvasId, monthlyData, weatherEvents) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return null;
 
-        // 准备数据
+        // Prepare data
         const labels = monthlyData.map(data => data.monthName);
         const baseSalesData = monthlyData.map(data => data.baseSales);
         const finalSalesData = monthlyData.map(data => data.finalSales);
         const weatherEventsCount = monthlyData.map(data => data.weatherEvents);
 
-        // 创建渐变色
+        // Create gradients
         const gradient1 = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
         gradient1.addColorStop(0, 'rgba(79, 70, 229, 0.8)');
         gradient1.addColorStop(1, 'rgba(79, 70, 229, 0.1)');
@@ -51,7 +51,7 @@ class ChartUtils {
                 labels: labels,
                 datasets: [
                     {
-                        label: '基础销售额（百万加元）',
+                        label: 'Base Sales (million CAD)',
                         data: baseSalesData,
                         borderColor: this.defaultColors.primary,
                         backgroundColor: gradient1,
@@ -64,7 +64,7 @@ class ChartUtils {
                         pointRadius: 6
                     },
                     {
-                        label: '实际销售额（受天气影响）',
+                        label: 'Actual Sales (weather-adjusted)',
                         data: finalSalesData,
                         borderColor: this.defaultColors.danger,
                         backgroundColor: gradient2,
@@ -104,7 +104,7 @@ class ChartUtils {
                             afterBody: function(tooltipItems) {
                                 const index = tooltipItems[0].dataIndex;
                                 const eventCount = weatherEventsCount[index];
-                                return eventCount > 0 ? `天气事件: ${eventCount}个` : '';
+                                return eventCount > 0 ? `Weather events: ${eventCount}` : '';
                             }
                         }
                     }
@@ -114,7 +114,7 @@ class ChartUtils {
                         display: true,
                         title: {
                             display: true,
-                            text: '月份'
+                            text: 'Month'
                         },
                         grid: {
                             display: false
@@ -124,7 +124,7 @@ class ChartUtils {
                         display: true,
                         title: {
                             display: true,
-                            text: '销售额（百万加元）'
+                            text: 'Sales (million CAD)'
                         },
                         grid: {
                             color: 'rgba(0, 0, 0, 0.1)'
@@ -146,16 +146,16 @@ class ChartUtils {
     }
 
     /**
-     * 创建天气影响对比图表
+     * Create weather impact comparison chart
      */
     createWeatherImpactChart(canvasId, weatherEvents, salesCalculator) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return null;
 
-        // 按天气类型汇总影响
+        // Aggregate impact by weather type
         const weatherTypeImpacts = {};
         weatherEvents.forEach(event => {
-            const impactAmount = Math.abs(event.impact.impactFactor * event.duration * 1000); // 转换为更易读的数值
+            const impactAmount = Math.abs(event.impact.impactFactor * event.duration * 1000); // Convert to more readable value
             
             if (!weatherTypeImpacts[event.type]) {
                 weatherTypeImpacts[event.type] = {
@@ -171,7 +171,7 @@ class ChartUtils {
             weatherTypeImpacts[event.type].provinces.add(event.province);
         });
 
-        // 准备图表数据
+        // Prepare chart data
         const labels = Object.keys(weatherTypeImpacts);
         const impacts = labels.map(type => weatherTypeImpacts[type].totalImpact);
         const counts = labels.map(type => weatherTypeImpacts[type].count);
@@ -183,9 +183,9 @@ class ChartUtils {
                 labels: labels,
                 datasets: [
                     {
-                        label: '累计影响程度',
+                        label: 'Cumulative Impact',
                         data: impacts,
-                        backgroundColor: colors.map(color => color + '80'), // 添加透明度
+                        backgroundColor: colors.map(color => color + '80'), // Add transparency
                         borderColor: colors,
                         borderWidth: 2,
                         borderRadius: 8,
@@ -214,9 +214,9 @@ class ChartUtils {
                                 const type = context.label;
                                 const data = weatherTypeImpacts[type];
                                 return [
-                                    `影响程度: ${context.parsed.y.toFixed(2)}`,
-                                    `事件次数: ${data.count}次`,
-                                    `影响省份: ${Array.from(data.provinces).join(', ')}`
+                                    `Impact: ${context.parsed.y.toFixed(2)}`,
+                                    `Event count: ${data.count}`,
+                                    `Affected provinces: ${Array.from(data.provinces).join(', ')}`
                                 ];
                             }
                         }
@@ -227,7 +227,7 @@ class ChartUtils {
                         display: true,
                         title: {
                             display: true,
-                            text: '天气事件类型'
+                            text: 'Weather Event Type'
                         },
                         grid: {
                             display: false
@@ -241,7 +241,7 @@ class ChartUtils {
                         display: true,
                         title: {
                             display: true,
-                            text: '累计影响程度'
+                            text: 'Cumulative Impact'
                         },
                         grid: {
                             color: 'rgba(0, 0, 0, 0.1)'
@@ -254,7 +254,7 @@ class ChartUtils {
     }
 
     /**
-     * 创建商品类别影响饼图
+     * Create product category impact pie chart
      */
     createCategoryImpactChart(canvasId, categoryBreakdown) {
         const ctx = document.getElementById(canvasId);
@@ -306,8 +306,8 @@ class ChartUtils {
                                 const percentage = ((Math.abs(data.weatherImpact) / data.baseAmount) * 100).toFixed(1);
                                 return [
                                     `${category}`,
-                                    `影响金额: ¥${Math.abs(data.weatherImpact).toFixed(1)}M`,
-                                    `影响比例: ${percentage}%`
+                                    `Impact Amount: $${Math.abs(data.weatherImpact).toFixed(1)}M`,
+                                    `Impact Share: ${percentage}%`
                                 ];
                             }
                         }
@@ -318,13 +318,13 @@ class ChartUtils {
     }
 
     /**
-     * 创建地区影响对比图表
+     * Create regional impact comparison chart
      */
     createRegionalImpactChart(canvasId, weatherEvents, regionalWeights) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return null;
 
-        // 按省份汇总天气事件
+        // Aggregate weather events by province
         const provincialData = {};
         
         weatherEvents.forEach(event => {
@@ -341,12 +341,12 @@ class ChartUtils {
             data.eventCount++;
             data.totalDuration += event.duration;
             
-            // 计算严重程度分数
+            // Calculate severity score
             const severityScores = { severe: 3, moderate: 2, mild: 1 };
             data.severityScore += severityScores[event.impact.severity] || 1;
         });
 
-        // 准备图表数据
+        // Prepare chart data
         const provinces = Object.keys(provincialData);
         const eventCounts = provinces.map(p => provincialData[p].eventCount);
         const severityScores = provinces.map(p => provincialData[p].severityScore);
@@ -357,7 +357,7 @@ class ChartUtils {
                 labels: provinces,
                 datasets: [
                     {
-                        label: '天气事件次数',
+                        label: 'Number of Weather Events',
                         data: eventCounts,
                         borderColor: this.defaultColors.primary,
                         backgroundColor: this.defaultColors.primary + '40',
@@ -367,7 +367,7 @@ class ChartUtils {
                         pointRadius: 6
                     },
                     {
-                        label: '严重程度分数',
+                        label: 'Severity Score',
                         data: severityScores,
                         borderColor: this.defaultColors.danger,
                         backgroundColor: this.defaultColors.danger + '40',
@@ -412,7 +412,7 @@ class ChartUtils {
     }
 
     /**
-     * 销毁图表实例
+     * Destroy chart instance
      */
     destroyChart(chartInstance) {
         if (chartInstance && typeof chartInstance.destroy === 'function') {
@@ -421,7 +421,7 @@ class ChartUtils {
     }
 
     /**
-     * 创建简单的进度条
+     * Create a simple progress bar
      */
     createProgressBar(containerId, percentage, label, color = this.defaultColors.primary) {
         const container = document.getElementById(containerId);

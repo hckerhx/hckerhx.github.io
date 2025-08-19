@@ -1,12 +1,12 @@
 /**
- * Metro门店天气查询模块
- * 提供获取示例门店列表及其在指定时间范围内的天气数据的功能。
- * 使用 open-meteo API 获取每日最高/最低气温、降水量和日照时长。
+ * Metro store weather query module
+ * Provides functions to retrieve sample store lists and weather data for a given time range.
+ * Uses the open-meteo API to fetch daily high/low temperatures, precipitation, and sunshine duration.
  */
 
 class MetroStoreWeather {
     constructor() {
-        // 示例门店数据，可根据实际情况扩展或通过API动态获取
+        // Sample store data; can be extended or fetched dynamically via API
         this.stores = [
             { id: 1, name: 'Downtown Toronto Metro', latitude: 43.6532, longitude: -79.3832 },
             { id: 2, name: 'Montreal Central Metro', latitude: 45.5019, longitude: -73.5674 },
@@ -15,10 +15,10 @@ class MetroStoreWeather {
     }
 
     /**
-     * 获取所有门店在指定时间范围内的天气信息
-     * @param {string} startDate - 开始日期，格式 YYYY-MM-DD
-     * @param {string} endDate - 结束日期，格式 YYYY-MM-DD
-     * @returns {Promise<Array>} 包含每个门店及其天气信息的数组
+     * Get weather information for all stores within a time range
+     * @param {string} startDate - start date in YYYY-MM-DD format
+     * @param {string} endDate - end date in YYYY-MM-DD format
+     * @returns {Promise<Array>} Array containing each store and its weather data
      */
     async getStoresWeather(startDate, endDate) {
         const results = [];
@@ -35,12 +35,12 @@ class MetroStoreWeather {
     }
 
     /**
-     * 调用 open-meteo API 获取指定位置的天气数据，并计算统计信息
-     * @param {number} lat - 纬度
-     * @param {number} lon - 经度
-     * @param {string} startDate - 开始日期，格式 YYYY-MM-DD
-     * @param {string} endDate - 结束日期，格式 YYYY-MM-DD
-     * @returns {Promise<Object>} 含最高/最低气温、降水总量和日照时长（小时）的对象
+     * Call the open-meteo API to fetch weather data for a location and compute statistics
+     * @param {number} lat - latitude
+     * @param {number} lon - longitude
+     * @param {string} startDate - start date in YYYY-MM-DD format
+     * @param {string} endDate - end date in YYYY-MM-DD format
+     * @returns {Promise<Object>} Object containing high/low temperatures, total precipitation, and sunlight hours
      */
     async fetchWeather(lat, lon, startDate, endDate) {
         const params = new URLSearchParams({
@@ -63,7 +63,7 @@ class MetroStoreWeather {
         const maxTemp = Math.max(...(daily.temperature_2m_max || []));
         const minTemp = Math.min(...(daily.temperature_2m_min || []));
         const precipitation = (daily.precipitation_sum || []).reduce((a, b) => a + b, 0);
-        const sunlightHours = (daily.sunshine_duration || []).reduce((a, b) => a + b, 0) / 3600; // 秒转小时
+        const sunlightHours = (daily.sunshine_duration || []).reduce((a, b) => a + b, 0) / 3600; // seconds to hours
 
         return {
             maxTemp,
@@ -74,6 +74,6 @@ class MetroStoreWeather {
     }
 }
 
-// 暴露到全局作用域，便于在控制台中测试
+// Expose to global scope for console testing
 window.MetroStoreWeather = MetroStoreWeather;
 

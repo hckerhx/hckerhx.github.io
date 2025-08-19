@@ -1,176 +1,69 @@
-# Metro 季度销售额天气影响分析系统
+# Metro Quarterly Sales Weather Impact Analysis System
 
-> 专为加拿大Metro零售商设计的季度销售额天气影响分析工具
+> A specialized analysis tool for Metro retailers in Canada to evaluate the impact of extreme weather events on quarterly sales.
 
-## 🎯 项目概述
+## 🎯 Overview
 
-Metro 季度销售额天气影响分析系统是一个专业的数据分析工具，帮助Metro零售商分析和评估极端天气事件对季度销售额的影响。系统提供直观的可视化界面和详细的分析报告，支持多季度跨度分析。
+The Metro Quarterly Sales Weather Impact Analysis System helps Metro retailers analyze how extreme weather events affect quarterly sales. The system provides intuitive visualizations and detailed analysis reports that support multi-quarter spans.
 
-## ✨ 已实现功能
+## ✨ Features
 
-### 🔧 核心功能
-- **时间范围选择**: 用户可指定开始和结束时间，系统自动识别包含的季度
-- **季度自动识别**: 智能识别选择时间范围内的完整季度
-- **天气事件模拟**: 基于加拿大各省真实天气模式的极端天气事件生成
-- **销售影响计算**: 多维度计算天气事件对销售额的影响
-- **数据可视化**: 使用Chart.js创建多种交互式图表
-- **门店天气查询**: 根据用户提供的时间范围获取示例Metro门店的天气信息（最高/最低气温、降水量、日照时长）
+### 🔧 Core Functions
+- **Time Range Selection**: Users specify start and end dates, and the system automatically detects complete quarters.
+- **Quarter Recognition**: Identifies full quarters within the selected range.
+- **Weather Event Simulation**: Generates extreme weather events based on real patterns across Canadian provinces.
+- **Sales Impact Calculation**: Evaluates how weather events influence sales from multiple perspectives.
+- **Data Visualization**: Uses Chart.js to create interactive charts.
+- **Store Weather Query**: Retrieves example Metro store weather data (high/low temperatures, precipitation, sunshine hours) for the chosen period.
 
-### 📊 分析维度
-- **地区分析**: 覆盖加拿大6个主要省份（Ontario, Quebec, BC, Alberta, Manitoba, Saskatchewan）
-- **季节性分析**: 根据不同季节的天气模式进行分析
-- **商品类别影响**: 分析食品杂货、药品保健、家居用品、服装鞋帽四大类别的受影响程度
-- **严重程度分级**: 将天气事件分为严重、中等、轻微三个级别
+### 📊 Analysis Dimensions
+- **Regional Analysis**: Covers six major Canadian provinces (Ontario, Quebec, BC, Alberta, Manitoba, Saskatchewan).
+- **Seasonal Analysis**: Considers seasonal weather patterns.
+- **Product Category Impact**: Assesses four categories—groceries, health products, household items, apparel & footwear.
+- **Severity Levels**: Classifies weather events as severe, moderate, or mild.
 
-### 📈 可视化图表
-- **销售趋势图**: 月度基础销售额 vs 实际销售额对比
-- **天气事件影响图**: 各类天气事件的累计影响分析
-- **商品类别饼图**: 不同商品类别受天气影响的分布
-- **地区雷达图**: 各省份天气事件分布和影响程度
+### 📈 Visualizations
+- **Sales Trend Chart**: Baseline vs. actual sales comparison.
+- **Weather Impact Chart**: Aggregated impact of various weather events.
+- **Category Pie Chart**: Distribution of weather impact across product categories.
+- **Regional Radar Chart**: Weather event distribution and severity by province.
 
-### 📋 数据统计
-- **综合统计**: 总天气事件数、销售额汇总、影响评级
-- **历史对比**: 与去年同期销售数据的对比分析
-- **预测建议**: 基于分析结果提供的业务决策建议
+### 📋 Data Statistics
+- **Summary**: Total weather events, sales totals, impact rating.
+- **Historical Comparison**: Comparison with the same period last year.
+- **Forecast Suggestions**: Business recommendations based on the analysis.
 
-## 🚀 功能入口
+## 🚀 Usage
 
-### 主要访问路径
-- **主页**: `index.html` - 系统主入口，包含时间选择和分析功能
-- **分析报告**: 通过主页表单提交后动态生成
+1. Open `index.html`.
+2. Select the start and end dates.
+3. Click **Run Analysis**.
+4. Review the generated report.
 
-### 请求参数
-- **开始时间** (startDate): 分析的起始日期，格式 YYYY-MM-DD
-- **结束时间** (endDate): 分析的结束日期，格式 YYYY-MM-DD
-- **时间范围限制**: 最大支持2年跨度分析
+## 🏗️ Project Structure
 
-## 🔄 尚未实现功能
-
-### 📝 数据持久化
-- [ ] 历史分析结果保存
-- [ ] 用户偏好设置存储
-- [ ] 分析报告导出功能（PDF/Excel）
-
-### 🌐 高级功能
-- [ ] 实时天气数据接入（示例实现：门店天气查询）
-- [ ] 多门店分析对比
-- [ ] 预测模型训练
-- [ ] 警报通知系统
-
-### 📊 扩展分析
-- [ ] 竞争对手数据对比
-- [ ] 市场趋势分析
-- [ ] 季节性预测模型
-- [ ] ROI影响评估
-
-## 🛠️ 建议的下一步开发
-
-### 优先级：高
-1. **数据持久化**: 实现分析结果的本地存储和历史查询
-2. **报告导出**: 添加PDF和Excel格式的报告导出功能
-3. **数据验证**: 增强输入数据的验证和错误处理机制
-
-### 优先级：中
-1. **API集成**: 接入真实的天气数据API（如Environment Canada）
-2. **性能优化**: 大数据量情况下的图表渲染优化
-3. **移动端优化**: 提升移动设备上的用户体验
-
-### 优先级：低
-1. **多语言支持**: 添加英语和法语界面
-2. **主题定制**: 支持深色模式和品牌主题
-3. **高级筛选**: 按天气类型、影响程度等维度筛选
-
-## 🏗️ 项目架构
-
-### 技术栈
-- **前端**: HTML5, CSS3, JavaScript (ES6+)
-- **图表库**: Chart.js 4.x
-- **样式框架**: 自定义CSS + Font Awesome图标
-- **字体**: Inter字体家族
-
-### 文件结构
 ```
-📦 Metro Weather Analysis System
-├── 📄 index.html              # 主页面
-├── 📁 css/
-│   └── 📄 style.css          # 主样式文件
-├── 📁 js/
-│   ├── 📄 main.js            # 主应用逻辑
-│   ├── 📄 weather-data.js    # 天气数据模拟
-│   ├── 📄 sales-calculator.js # 销售计算引擎
-│   └── 📄 chart-utils.js     # 图表工具类
-└── 📄 README.md              # 项目文档
+├── index.html              # Main page
+├── css/
+│   └── style.css           # Main stylesheet
+├── js/
+│   ├── main.js             # Application logic
+│   ├── weather-data.js     # Weather data simulation
+│   ├── sales-calculator.js # Sales impact calculator
+│   ├── chart-utils.js      # Chart utilities
+│   └── metro-store-weather.js # Sample store weather
+└── README.md               # Documentation
 ```
 
-### 核心模块
-- **WeatherDataManager**: 天气数据生成和管理
-- **SalesCalculator**: 销售影响计算引擎
-- **ChartUtils**: 图表创建和管理工具
-- **MetroWeatherAnalyzer**: 主应用控制器
+## 📞 Support
 
-## 📊 数据模型
-
-### 天气事件模型
-```javascript
-{
-  type: "暴雪",              // 天气事件类型
-  province: "Ontario",       // 影响省份
-  date: Date,               // 发生日期
-  duration: 3,              // 持续天数
-  impact: {                 // 影响参数
-    severity: "severe",     // 严重程度
-    impactFactor: -0.25,    // 影响系数
-    icon: "fas fa-snowflake" // 显示图标
-  }
-}
-```
-
-### 销售数据模型
-```javascript
-{
-  baseSales: 3800,          // 基础销售额（百万加元）
-  finalSales: 3420,         // 最终销售额
-  totalWeatherImpact: -380, // 天气影响总额
-  impactPercentage: -10.0,  // 影响百分比
-  categoryBreakdown: {...}  // 类别详细分解
-}
-```
-
-## 🔧 使用说明
-
-### 基本操作
-1. 打开 `index.html` 文件
-2. 选择分析的开始时间和结束时间
-3. 点击"开始分析"按钮
-4. 等待分析完成，查看结果报告
-
-### 高级功能
-- **多季度分析**: 选择跨越多个季度的时间范围进行综合分析
-- **图表交互**: 悬停图表元素查看详细数据
-- **数据筛选**: 通过图表图例开关不同数据系列的显示
-
-### 注意事项
-- 时间范围最大支持2年跨度
-- 系统使用模拟数据，仅供演示和测试
-- 建议使用现代浏览器以获得最佳体验
-
-## 📞 技术支持
-
-### 系统要求
-- 现代浏览器（Chrome 80+, Firefox 75+, Safari 13+, Edge 80+）
-- JavaScript 启用
-- 网络连接（加载CDN资源）
-
-### 已知问题
-- 大跨度时间范围可能导致图表显示密集
-- 移动端部分图表可能需要滚动查看完整内容
-
-### 性能建议
-- 建议单次分析不超过8个季度
-- 在性能较低的设备上，建议减少分析的时间范围
+- Modern browser (Chrome 80+, Firefox 75+, Safari 13+, Edge 80+)
+- JavaScript enabled
+- Internet connection for CDN resources
 
 ---
 
-**开发团队**: Metro数据分析团队  
-**最后更新**: 2024年12月  
-**版本**: 1.0.0
+**Development Team**: Metro Data Analysis Team  
+**Last Update**: December 2024  
+**Version**: 1.0.0
+

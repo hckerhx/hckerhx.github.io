@@ -1,43 +1,43 @@
 /**
- * Metro销售额计算模块
- * 模拟Metro零售商的季度销售数据并计算天气影响
+ * Metro sales calculation module
+ * Simulates Metro retailers' quarterly sales data and calculates weather impact
  */
 
 class SalesCalculator {
     constructor() {
-        // Metro基础季度销售数据（单位：百万加元）
+        // Base quarterly sales data for Metro (in million CAD)
         this.baseSalesData = {
-            Q1: { base: 3800, growth: 0.02 }, // 第一季度基础销售额
-            Q2: { base: 3600, growth: 0.025 }, // 第二季度
-            Q3: { base: 3500, growth: 0.03 }, // 第三季度
-            Q4: { base: 4200, growth: 0.035 } // 第四季度（包含假期）
+            Q1: { base: 3800, growth: 0.02 }, // Base sales for Q1
+            Q2: { base: 3600, growth: 0.025 }, // Q2
+            Q3: { base: 3500, growth: 0.03 }, // Q3
+            Q4: { base: 4200, growth: 0.035 } // Q4 (includes holidays)
         };
 
-        // 不同商品类别在天气事件中的敏感度
+        // Sensitivity of product categories to weather events
         this.categorySensitivity = {
-            '食品杂货': { 
-                positiveWeather: 0.05, 
+            'Groceries': {
+                positiveWeather: 0.05,
                 negativeWeather: -0.12,
-                baseShare: 0.65 // 占总销售额的65%
+                baseShare: 0.65 // Accounts for 65% of total sales
             },
-            '药品保健': { 
-                positiveWeather: 0.02, 
+            'Health Products': {
+                positiveWeather: 0.02,
                 negativeWeather: -0.08,
                 baseShare: 0.15
             },
-            '家居用品': { 
-                positiveWeather: -0.03, 
+            'Household Items': {
+                positiveWeather: -0.03,
                 negativeWeather: -0.20,
                 baseShare: 0.12
             },
-            '服装鞋帽': { 
-                positiveWeather: -0.05, 
+            'Apparel & Footwear': {
+                positiveWeather: -0.05,
                 negativeWeather: -0.25,
                 baseShare: 0.08
             }
         };
 
-        // 地区销售权重（基于Metro在各省的门店分布）
+        // Regional sales weights (based on Metro's store distribution)
         this.regionalWeights = {
             'Ontario': 0.55,
             'Quebec': 0.35,
@@ -49,31 +49,31 @@ class SalesCalculator {
     }
 
     /**
-     * 计算季度基础销售额
+     * Calculate base quarterly sales
      */
     calculateBaseSales(quarterInfo, year) {
         const quarterKey = `Q${quarterInfo.quarter}`;
         const baseSales = this.baseSalesData[quarterKey];
         
-        // 考虑年度增长
+        // Consider annual growth
         const yearsSince2020 = year - 2020;
         const growthFactor = Math.pow(1 + baseSales.growth, yearsSince2020);
         
-        // 添加随机波动（±3%）
+        // Add random fluctuation (±3%)
         const randomFactor = 1 + (Math.random() - 0.5) * 0.06;
-        
+
         return baseSales.base * growthFactor * randomFactor;
     }
 
     /**
-     * 计算天气事件对销售的影响
+     * Calculate the impact of weather events on sales
      */
     calculateWeatherImpact(baseSales, weatherEvents) {
         let totalImpact = 0;
         const categoryImpacts = {};
         const eventImpacts = [];
 
-        // 初始化类别影响
+        // Initialize category impacts
         Object.keys(this.categorySensitivity).forEach(category => {
             categoryImpacts[category] = {
                 baseAmount: baseSales * this.categorySensitivity[category].baseShare,
@@ -82,30 +82,30 @@ class SalesCalculator {
             };
         });
 
-        // 计算每个天气事件的影响
+        // Calculate the impact of each weather event
         weatherEvents.forEach(event => {
             const regionalWeight = this.regionalWeights[event.province] || 0.01;
             const eventImpactFactor = event.impact.impactFactor * event.duration * regionalWeight;
             
-            // 对每个商品类别计算影响
+            // Calculate impact for each product category
             Object.keys(this.categorySensitivity).forEach(category => {
                 const categoryData = this.categorySensitivity[category];
                 const categoryBaseSales = baseSales * categoryData.baseShare;
                 
-                // 计算类别特定的天气影响
+                // Compute category-specific weather impact
                 let categoryImpact;
                 if (eventImpactFactor < 0) {
-                    // 负面天气事件
+                    // Negative weather event
                     categoryImpact = categoryBaseSales * eventImpactFactor * Math.abs(categoryData.negativeWeather);
                 } else {
-                    // 正面天气事件（极少见）
+                    // Positive weather event (rare)
                     categoryImpact = categoryBaseSales * eventImpactFactor * categoryData.positiveWeather;
                 }
                 
                 categoryImpacts[category].weatherImpact += categoryImpact;
             });
 
-            // 记录单个事件的影响
+            // Record the impact of the individual event
             const eventTotalImpact = baseSales * eventImpactFactor;
             eventImpacts.push({
                 event: event,
@@ -116,7 +116,7 @@ class SalesCalculator {
             totalImpact += eventTotalImpact;
         });
 
-        // 计算最终销售额
+        // Calculate final sales
         Object.keys(categoryImpacts).forEach(category => {
             const categoryData = categoryImpacts[category];
             categoryData.finalAmount = categoryData.baseAmount + categoryData.weatherImpact;
@@ -136,20 +136,20 @@ class SalesCalculator {
     }
 
     /**
-     * 生成月度销售分布数据
+     * Generate monthly sales distribution data
      */
     generateMonthlySalesData(quarterInfo, finalSales, weatherEvents) {
         const monthlyData = [];
         const quarterStartMonth = (quarterInfo.quarter - 1) * 3;
         
-        // 基础月度分布（每月占季度的比例）
-        const monthlyDistribution = [0.32, 0.34, 0.34]; // 略有变化的月度分布
+        // Baseline monthly distribution (proportion of each month in a quarter)
+        const monthlyDistribution = [0.32, 0.34, 0.34]; // Slightly varied monthly distribution
         
         for (let i = 0; i < 3; i++) {
             const month = quarterStartMonth + i;
             const monthDate = new Date(quarterInfo.year, month, 1);
             
-            // 计算该月的天气事件影响
+            // Calculate weather impact for the month
             const monthWeatherEvents = weatherEvents.filter(event => {
                 return event.date.getMonth() === month;
             });
@@ -160,10 +160,10 @@ class SalesCalculator {
                 monthWeatherImpact += event.impact.impactFactor * event.duration * regionalWeight;
             });
             
-            // 基础月销售额
+            // Baseline monthly sales
             const baseMonthlySales = finalSales * monthlyDistribution[i];
-            
-            // 添加月度随机波动
+
+            // Add monthly random fluctuation
             const randomFactor = 1 + (Math.random() - 0.5) * 0.04;
             const finalMonthlySales = baseMonthlySales * randomFactor;
             
@@ -182,21 +182,21 @@ class SalesCalculator {
     }
 
     /**
-     * 获取月份名称
+     * Get month name
      */
     getMonthName(monthIndex) {
         const months = [
-            '一月', '二月', '三月', '四月', '五月', '六月',
-            '七月', '八月', '九月', '十月', '十一月', '十二月'
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
         ];
         return months[monthIndex];
     }
 
     /**
-     * 计算与历史同期的对比
+     * Calculate comparison with the same period last year
      */
     calculateHistoricalComparison(currentSales, quarterInfo) {
-        // 模拟历史同期数据
+        // Simulate historical sales for comparison
         const historicalSales = this.calculateBaseSales(quarterInfo, quarterInfo.year - 1);
         const difference = currentSales.finalSales - historicalSales;
         const percentageChange = (difference / historicalSales) * 100;
@@ -211,46 +211,46 @@ class SalesCalculator {
     }
 
     /**
-     * 生成销售预测调整建议
+     * Generate sales forecast adjustment recommendations
      */
     generateForecastAdjustments(salesData, weatherEvents) {
         const recommendations = [];
         
-        // 基于天气影响严重程度提供建议
+        // Provide recommendations based on severity of weather impact
         if (salesData.impactPercentage < -10) {
             recommendations.push({
                 type: 'critical',
-                title: '严重天气影响预警',
-                message: '极端天气事件对销售造成严重负面影响，建议加强库存管理和供应链应急预案。',
-                action: '考虑增加必需品库存，优化配送路线。'
+                title: 'Severe Weather Impact Warning',
+                message: 'Extreme weather events have severely impacted sales; enhance inventory management and supply chain contingency plans.',
+                action: 'Consider increasing essential inventory and optimizing delivery routes.'
             });
         } else if (salesData.impactPercentage < -5) {
             recommendations.push({
                 type: 'warning',
-                title: '中等天气影响',
-                message: '天气事件对销售产生中等程度影响，建议密切关注后续发展。',
-                action: '调整营销策略，关注受影响地区的门店运营。'
+                title: 'Moderate Weather Impact',
+                message: 'Weather events have a moderate effect on sales; closely monitor developments.',
+                action: 'Adjust marketing strategies and monitor operations in affected regions.'
             });
         } else if (salesData.impactPercentage < -2) {
             recommendations.push({
                 type: 'info',
-                title: '轻微天气影响',
-                message: '天气事件对销售影响较小，维持正常运营策略。',
-                action: '继续监控天气条件，做好应急准备。'
+                title: 'Minor Weather Impact',
+                message: 'Weather events have a minimal effect on sales; maintain normal operations.',
+                action: 'Continue monitoring weather conditions and prepare contingency plans.'
             });
         }
 
-        // 基于商品类别影响提供建议
+        // Provide recommendations based on category impact
         Object.keys(salesData.categoryBreakdown).forEach(category => {
             const categoryData = salesData.categoryBreakdown[category];
             const categoryImpactPercentage = (categoryData.weatherImpact / categoryData.baseAmount) * 100;
-            
+
             if (categoryImpactPercentage < -15) {
                 recommendations.push({
                     type: 'category',
-                    title: `${category}类别影响严重`,
-                    message: `${category}受天气影响严重，销售下降${Math.abs(categoryImpactPercentage).toFixed(1)}%。`,
-                    action: `考虑调整${category}的采购计划和促销策略。`
+                    title: `Significant Impact on ${category}`,
+                    message: `${category} is heavily affected by weather, sales dropped ${Math.abs(categoryImpactPercentage).toFixed(1)}%.`,
+                    action: `Consider adjusting procurement and promotion strategies for ${category}.`
                 });
             }
         });
@@ -259,22 +259,22 @@ class SalesCalculator {
     }
 
     /**
-     * 格式化货币显示
+     * Format currency display
      */
     formatCurrency(amount) {
-        return new Intl.NumberFormat('zh-CN', {
+        return new Intl.NumberFormat('en-CA', {
             style: 'currency',
             currency: 'CAD',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
-        }).format(amount * 1000000); // 转换为实际金额（百万加元）
+        }).format(amount * 1000000); // Convert to actual amount (million CAD)
     }
 
     /**
-     * 格式化百分比显示
+     * Format percentage display
      */
     formatPercentage(percentage) {
-        return new Intl.NumberFormat('zh-CN', {
+        return new Intl.NumberFormat('en-CA', {
             style: 'percent',
             minimumFractionDigits: 1,
             maximumFractionDigits: 1
