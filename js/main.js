@@ -1,6 +1,6 @@
 /**
- * 主要应用逻辑
- * 处理用户交互和数据流程
+ * Main application logic
+ * Handles user interactions and data flow
  */
 
 class MetroWeatherAnalyzer {
@@ -9,7 +9,7 @@ class MetroWeatherAnalyzer {
         this.salesCalculator = new SalesCalculator();
         this.chartUtils = new ChartUtils();
         
-        // 存储图表实例
+        // Store chart instances
         this.charts = {
             salesChart: null,
             weatherImpactChart: null,
@@ -21,7 +21,7 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 初始化应用
+     * Initialize the application
      */
     initialize() {
         this.setupEventListeners();
@@ -29,7 +29,7 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 设置事件监听器
+     * Set up event listeners
      */
     setupEventListeners() {
         const timeForm = document.getElementById('timeForm');
@@ -40,7 +40,7 @@ class MetroWeatherAnalyzer {
             });
         }
 
-        // 日期验证
+        // Date validation
         const startDateInput = document.getElementById('startDate');
         const endDateInput = document.getElementById('endDate');
 
@@ -51,12 +51,12 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 设置默认日期
+     * Set default dates
      */
     setDefaultDates() {
         const today = new Date();
-        const startDate = new Date(today.getFullYear(), 0, 1); // 当年1月1日
-        const endDate = new Date(today.getFullYear(), 11, 31); // 当年12月31日
+        const startDate = new Date(today.getFullYear(), 0, 1); // January 1 of the current year
+        const endDate = new Date(today.getFullYear(), 11, 31); // December 31 of the current year
 
         const startDateInput = document.getElementById('startDate');
         const endDateInput = document.getElementById('endDate');
@@ -68,14 +68,14 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 格式化日期为input[type="date"]格式
+     * Format date for input[type="date"]
      */
     formatDateForInput(date) {
         return date.toISOString().split('T')[0];
     }
 
     /**
-     * 验证日期范围
+     * Validate date range
      */
     validateDateRange() {
         const startDateInput = document.getElementById('startDate');
@@ -87,83 +87,83 @@ class MetroWeatherAnalyzer {
         const endDate = new Date(endDateInput.value);
 
         if (startDate >= endDate) {
-            endDateInput.setCustomValidity('结束时间必须晚于开始时间');
+            endDateInput.setCustomValidity('End date must be after start date');
         } else if (endDate - startDate > 365 * 24 * 60 * 60 * 1000 * 2) {
-            // 限制最大时间跨度为2年
-            endDateInput.setCustomValidity('时间跨度不能超过2年');
+            // Limit maximum time range to 2 years
+            endDateInput.setCustomValidity('Time range cannot exceed 2 years');
         } else {
             endDateInput.setCustomValidity('');
         }
     }
 
     /**
-     * 处理分析请求
+     * Handle analysis request
      */
     async handleAnalysisRequest() {
         try {
-            // 显示加载状态
+            // Show loading state
             this.showLoading();
 
-            // 获取用户输入
+            // Get user input
             const startDateInput = document.getElementById('startDate');
             const endDateInput = document.getElementById('endDate');
 
             if (!startDateInput || !endDateInput) {
-                throw new Error('无法获取日期输入');
+                throw new Error('Unable to retrieve date inputs');
             }
 
             const startDate = startDateInput.value;
             const endDate = endDateInput.value;
 
             if (!startDate || !endDate) {
-                throw new Error('请选择开始时间和结束时间');
+                throw new Error('Please select start and end dates');
             }
 
-            // 模拟异步处理
+            // Simulate asynchronous processing
             await this.delay(1500);
 
-            // 执行分析
+            // Perform analysis
             await this.performAnalysis(startDate, endDate);
 
         } catch (error) {
-            console.error('分析过程中出现错误:', error);
+            console.error('Error occurred during analysis:', error);
             this.showError(error.message);
         }
     }
 
     /**
-     * 执行分析
+     * Perform analysis
      */
     async performAnalysis(startDate, endDate) {
-        // 1. 获取季度信息
+        // 1. Get quarter information
         const quarters = this.weatherManager.getQuartersInRange(startDate, endDate);
         
         if (quarters.length === 0) {
-            throw new Error('选择的时间范围内没有完整的季度');
+            throw new Error('No complete quarters found within the selected range');
         }
 
-        // 2. 分析每个季度
+        // 2. Analyze each quarter
         const analysisResults = [];
         
         for (const quarter of quarters) {
-            // 生成天气事件
+            // Generate weather events
             const weatherEvents = this.weatherManager.generateWeatherEvents(quarter);
             
-            // 计算销售影响
+            // Calculate sales impact
             const baseSales = this.salesCalculator.calculateBaseSales(quarter, quarter.year);
             const salesImpact = this.salesCalculator.calculateWeatherImpact(baseSales, weatherEvents);
             
-            // 生成月度数据
+            // Generate monthly data
             const monthlyData = this.salesCalculator.generateMonthlySalesData(
                 quarter, salesImpact.finalSales, weatherEvents
             );
             
-            // 历史对比
+            // Historical comparison
             const historicalComparison = this.salesCalculator.calculateHistoricalComparison(
                 salesImpact, quarter
             );
             
-            // 预测建议
+            // Forecast recommendations
             const recommendations = this.salesCalculator.generateForecastAdjustments(
                 salesImpact, weatherEvents
             );
@@ -178,43 +178,43 @@ class MetroWeatherAnalyzer {
             });
         }
 
-        // 3. 显示结果
+        // 3. Display results
         this.displayResults(analysisResults);
     }
 
     /**
-     * 显示分析结果
+     * Display analysis results
      */
     displayResults(analysisResults) {
-        // 隐藏加载状态
+        // Hide loading state
         this.hideLoading();
 
-        // 显示结果区域
+        // Show results section
         const resultsSection = document.getElementById('resultsSection');
         if (resultsSection) {
             resultsSection.style.display = 'block';
         }
 
-        // 显示季度信息
+        // Display quarter information
         this.displayQuarterInfo(analysisResults);
 
-        // 显示天气事件
+        // Display weather events
         this.displayWeatherEvents(analysisResults);
 
-        // 创建图表
+        // Create charts
         this.createCharts(analysisResults);
 
-        // 显示统计数据
+        // Display statistics
         this.displayStatistics(analysisResults);
 
-        // 滚动到结果区域
+        // Scroll to results section
         if (resultsSection) {
             resultsSection.scrollIntoView({ behavior: 'smooth' });
         }
     }
 
     /**
-     * 显示季度信息
+     * Display quarter information
      */
     displayQuarterInfo(analysisResults) {
         const quarterInfoContainer = document.getElementById('quarterInfo');
@@ -234,21 +234,21 @@ class MetroWeatherAnalyzer {
                         ${this.formatDate(quarter.startDate)} - ${this.formatDate(quarter.endDate)}
                     </div>
                     <div class="metric">
-                        <span class="metric-label">基础销售额:</span>
+                        <span class="metric-label">Base Sales:</span>
                         <span class="metric-value">${this.salesCalculator.formatCurrency(salesImpact.baseSales)}</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-label">实际销售额:</span>
+                        <span class="metric-label">Actual Sales:</span>
                         <span class="metric-value">${this.salesCalculator.formatCurrency(salesImpact.finalSales)}</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-label">天气影响:</span>
+                        <span class="metric-label">Weather Impact:</span>
                         <span class="metric-value ${salesImpact.impactPercentage < 0 ? 'negative' : 'positive'}">
                             ${this.salesCalculator.formatPercentage(salesImpact.impactPercentage)}
                         </span>
                     </div>
                     <div class="metric">
-                        <span class="metric-label">同比变化:</span>
+                        <span class="metric-label">Year-over-Year Change:</span>
                         <span class="metric-value ${comparison.isPositive ? 'positive' : 'negative'}">
                             ${this.salesCalculator.formatPercentage(comparison.percentageChange)}
                         </span>
@@ -261,7 +261,7 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 显示天气事件
+     * Display weather events
      */
     displayWeatherEvents(analysisResults) {
         const weatherEventsContainer = document.getElementById('weatherEvents');
@@ -279,7 +279,7 @@ class MetroWeatherAnalyzer {
                         <div class="weather-event-info">
                             <div class="weather-event-title">${event.type} - ${event.province}</div>
                             <div class="weather-event-date">
-                                ${this.formatDate(event.date)} (持续${event.duration}天)
+                                ${this.formatDate(event.date)} (lasting ${event.duration} days)
                             </div>
                             <div class="weather-event-impact">${event.description}</div>
                         </div>
@@ -289,22 +289,22 @@ class MetroWeatherAnalyzer {
         });
 
         if (html === '') {
-            html = '<p class="text-center">选择的时间范围内没有记录到极端天气事件。</p>';
+            html = '<p class="text-center">No extreme weather events were recorded for the selected time range.</p>';
         }
 
         weatherEventsContainer.innerHTML = html;
     }
 
     /**
-     * 创建图表
+     * Create charts
      */
     createCharts(analysisResults) {
-        // 销毁现有图表
+        // Destroy existing charts
         Object.values(this.charts).forEach(chart => {
             this.chartUtils.destroyChart(chart);
         });
 
-        // 合并所有数据用于图表显示
+        // Combine all data for chart display
         const allMonthlyData = [];
         const allWeatherEvents = [];
         let totalSalesImpact = null;
@@ -316,12 +316,12 @@ class MetroWeatherAnalyzer {
             if (!totalSalesImpact) {
                 totalSalesImpact = { ...result.salesImpact };
             } else {
-                // 合并销售影响数据
+                // Merge sales impact data
                 totalSalesImpact.baseSales += result.salesImpact.baseSales;
                 totalSalesImpact.finalSales += result.salesImpact.finalSales;
                 totalSalesImpact.totalWeatherImpact += result.salesImpact.totalWeatherImpact;
                 
-                // 合并类别数据
+                // Merge category data
                 Object.keys(result.salesImpact.categoryBreakdown).forEach(category => {
                     if (totalSalesImpact.categoryBreakdown[category]) {
                         totalSalesImpact.categoryBreakdown[category].baseAmount += 
@@ -335,25 +335,25 @@ class MetroWeatherAnalyzer {
             }
         });
 
-        // 重新计算总体影响百分比
+        // Recalculate overall impact percentage
         if (totalSalesImpact) {
             totalSalesImpact.impactPercentage = 
                 (totalSalesImpact.totalWeatherImpact / totalSalesImpact.baseSales) * 100;
         }
 
-        // 创建销售趋势图表
+        // Create sales trend chart
         this.charts.salesChart = this.chartUtils.createSalesChart(
             'salesChart', allMonthlyData, allWeatherEvents
         );
 
-        // 创建天气影响对比图表
+        // Create weather impact comparison chart
         this.charts.weatherImpactChart = this.chartUtils.createWeatherImpactChart(
             'weatherImpactChart', allWeatherEvents, this.salesCalculator
         );
 
-        // 如果有多个季度的数据，创建类别影响饼图
+        // If multiple quarters exist, create category impact pie chart
         if (totalSalesImpact && totalSalesImpact.categoryBreakdown) {
-            // 为类别图表创建一个新的canvas（如果不存在）
+            // Create a new canvas for the category chart if it doesn't exist
             this.createCategoryChartCanvas();
             this.charts.categoryChart = this.chartUtils.createCategoryImpactChart(
                 'categoryChart', totalSalesImpact.categoryBreakdown
@@ -362,7 +362,7 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 创建类别图表画布
+     * Create category chart canvas
      */
     createCategoryChartCanvas() {
         const existingCanvas = document.getElementById('categoryChart');
@@ -372,7 +372,7 @@ class MetroWeatherAnalyzer {
         const newChartContainer = weatherImpactChartContainer.cloneNode(false);
         
         newChartContainer.innerHTML = `
-            <h3><i class="fas fa-chart-pie"></i> 商品类别影响分析</h3>
+            <h3><i class="fas fa-chart-pie"></i> Product Category Impact Analysis</h3>
             <div class="chart-container">
                 <canvas id="categoryChart" style="height: 350px;"></canvas>
             </div>
@@ -384,13 +384,13 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 显示统计数据
+     * Display statistics
      */
     displayStatistics(analysisResults) {
         const statsGridContainer = document.getElementById('statsGrid');
         if (!statsGridContainer) return;
 
-        // 计算汇总统计
+        // Calculate summary statistics
         let totalEvents = 0;
         let totalBaseSales = 0;
         let totalFinalSales = 0;
@@ -414,31 +414,31 @@ class MetroWeatherAnalyzer {
 
         const html = `
             <div class="stat-card">
-                <h4>总天气事件数</h4>
+                <h4>Total Weather Events</h4>
                 <div class="value">${totalEvents}</div>
                 <div class="change neutral">
-                    其中严重事件 ${severeEventCount} 个
+                    including ${severeEventCount} severe events
                 </div>
             </div>
             
             <div class="stat-card">
-                <h4>基础销售额</h4>
+                <h4>Base Sales</h4>
                 <div class="value">${this.salesCalculator.formatCurrency(totalBaseSales)}</div>
                 <div class="change neutral">
-                    分析期间预期收入
+                    Projected revenue during the analysis period
                 </div>
             </div>
             
             <div class="stat-card">
-                <h4>实际销售额</h4>
+                <h4>Actual Sales</h4>
                 <div class="value">${this.salesCalculator.formatCurrency(totalFinalSales)}</div>
                 <div class="change ${totalWeatherImpact < 0 ? 'negative' : 'positive'}">
-                    ${totalWeatherImpact < 0 ? '受天气负面影响' : '天气影响较小'}
+                    ${totalWeatherImpact < 0 ? 'Negative weather impact' : 'Minimal weather impact'}
                 </div>
             </div>
             
             <div class="stat-card">
-                <h4>天气影响总额</h4>
+                <h4>Total Weather Impact</h4>
                 <div class="value">${this.salesCalculator.formatCurrency(Math.abs(totalWeatherImpact))}</div>
                 <div class="change ${totalWeatherImpact < 0 ? 'negative' : 'positive'}">
                     ${this.salesCalculator.formatPercentage(overallImpactPercentage)}
@@ -446,23 +446,23 @@ class MetroWeatherAnalyzer {
             </div>
             
             <div class="stat-card">
-                <h4>分析季度数</h4>
+                <h4>Number of Quarters Analyzed</h4>
                 <div class="value">${analysisResults.length}</div>
                 <div class="change neutral">
-                    跨越 ${analysisResults.length} 个季度
+                    Covering ${analysisResults.length} quarters
                 </div>
             </div>
             
             <div class="stat-card">
-                <h4>影响评级</h4>
+                <h4>Impact Rating</h4>
                 <div class="value">
-                    ${Math.abs(overallImpactPercentage) > 10 ? '严重' : 
-                      Math.abs(overallImpactPercentage) > 5 ? '中等' : '轻微'}
+                    ${Math.abs(overallImpactPercentage) > 10 ? 'Severe' :
+                      Math.abs(overallImpactPercentage) > 5 ? 'Moderate' : 'Mild'}
                 </div>
-                <div class="change ${Math.abs(overallImpactPercentage) > 10 ? 'negative' : 
+                <div class="change ${Math.abs(overallImpactPercentage) > 10 ? 'negative' :
                                      Math.abs(overallImpactPercentage) > 5 ? 'neutral' : 'positive'}">
-                    需要${Math.abs(overallImpactPercentage) > 10 ? '立即关注' : 
-                           Math.abs(overallImpactPercentage) > 5 ? '密切监控' : '正常监控'}
+                    Requires ${Math.abs(overallImpactPercentage) > 10 ? 'immediate attention' :
+                           Math.abs(overallImpactPercentage) > 5 ? 'close monitoring' : 'routine monitoring'}
                 </div>
             </div>
         `;
@@ -471,7 +471,7 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 显示加载状态
+     * Show loading state
      */
     showLoading() {
         const loadingSection = document.getElementById('loadingSection');
@@ -486,7 +486,7 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 隐藏加载状态
+     * Hide loading state
      */
     hideLoading() {
         const loadingSection = document.getElementById('loadingSection');
@@ -496,19 +496,19 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 显示错误信息
+     * Show error message
      */
     showError(message) {
         this.hideLoading();
         
-        // 创建错误提示
+        // Create error message
         const errorHtml = `
             <div class="card text-center" style="border-left: 4px solid #ef4444;">
                 <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;"></i>
-                <h3 style="color: #ef4444;">分析过程中出现错误</h3>
+                <h3 style="color: #ef4444;">An error occurred during analysis</h3>
                 <p style="color: #6b7280;">${message}</p>
                 <button class="btn-primary" onclick="location.reload()">
-                    <i class="fas fa-refresh"></i> 重新开始
+                    <i class="fas fa-refresh"></i> Restart
                 </button>
             </div>
         `;
@@ -521,10 +521,10 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 格式化日期显示
+     * Format date display
      */
     formatDate(date) {
-        return new Intl.DateTimeFormat('zh-CN', {
+        return new Intl.DateTimeFormat('en-CA', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
@@ -532,19 +532,19 @@ class MetroWeatherAnalyzer {
     }
 
     /**
-     * 延迟函数
+     * Delay helper
      */
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
 
-// 当页面加载完成后初始化应用
+// Initialize the app when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     const analyzer = new MetroWeatherAnalyzer();
     
-    // 将实例挂载到全局，便于调试
+    // Expose the instance globally for debugging
     window.metroAnalyzer = analyzer;
     
-    console.log('Metro 天气影响分析系统已初始化');
+    console.log('Metro Weather Impact Analysis System initialized');
 });

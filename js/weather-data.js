@@ -1,73 +1,73 @@
 /**
- * 天气数据模拟模块
- * 模拟加拿大不同地区的极端天气事件数据
+ * Weather data simulation module
+ * Simulates extreme weather events across Canadian regions
  */
 
 class WeatherDataManager {
     constructor() {
-        // 加拿大主要省份/地区的天气模式
+        // Weather patterns for major Canadian provinces/regions
         this.weatherPatterns = {
             'Ontario': {
-                winter: ['暴雪', '冰暴', '严寒'],
-                spring: ['洪水', '冰雹', '龙卷风'],
-                summer: ['热浪', '雷暴', '干旱'],
-                autumn: ['飓风残余', '早霜', '暴雨']
+                winter: ['Blizzard', 'Ice Storm', 'Extreme Cold'],
+                spring: ['Flood', 'Hailstorm', 'Tornado'],
+                summer: ['Heatwave', 'Thunderstorm', 'Drought'],
+                autumn: ['Hurricane Remnants', 'Early Frost', 'Heavy Rain']
             },
             'Quebec': {
-                winter: ['暴雪', '冰暴', '严寒'],
-                spring: ['春汛', '冰雹'],
-                summer: ['热浪', '雷暴'],
-                autumn: ['暴雨', '早霜']
+                winter: ['Blizzard', 'Ice Storm', 'Extreme Cold'],
+                spring: ['Spring Flood', 'Hailstorm'],
+                summer: ['Heatwave', 'Thunderstorm'],
+                autumn: ['Heavy Rain', 'Early Frost']
             },
             'British Columbia': {
-                winter: ['暴雨', '洪水', '大风'],
-                spring: ['洪水', '滑坡'],
-                summer: ['森林火灾', '干旱', '热浪'],
-                autumn: ['暴雨', '大风']
+                winter: ['Heavy Rain', 'Flood', 'High Winds'],
+                spring: ['Flood', 'Landslide'],
+                summer: ['Wildfire', 'Drought', 'Heatwave'],
+                autumn: ['Heavy Rain', 'High Winds']
             },
             'Alberta': {
-                winter: ['暴雪', '严寒', '大风'],
-                spring: ['冰雹', '龙卷风'],
-                summer: ['雷暴', '冰雹', '干旱'],
-                autumn: ['早霜', '暴雪']
+                winter: ['Blizzard', 'Extreme Cold', 'High Winds'],
+                spring: ['Hailstorm', 'Tornado'],
+                summer: ['Thunderstorm', 'Hailstorm', 'Drought'],
+                autumn: ['Early Frost', 'Blizzard']
             },
             'Manitoba': {
-                winter: ['暴雪', '严寒'],
-                spring: ['洪水', '冰雹'],
-                summer: ['雷暴', '干旱'],
-                autumn: ['早霜', '暴雪']
+                winter: ['Blizzard', 'Extreme Cold'],
+                spring: ['Flood', 'Hailstorm'],
+                summer: ['Thunderstorm', 'Drought'],
+                autumn: ['Early Frost', 'Blizzard']
             },
             'Saskatchewan': {
-                winter: ['暴雪', '严寒', '大风'],
-                spring: ['冰雹', '龙卷风'],
-                summer: ['雷暴', '干旱'],
-                autumn: ['早霜', '暴雪']
+                winter: ['Blizzard', 'Extreme Cold', 'High Winds'],
+                spring: ['Hailstorm', 'Tornado'],
+                summer: ['Thunderstorm', 'Drought'],
+                autumn: ['Early Frost', 'Blizzard']
             }
         };
 
-        // 天气事件的严重程度和影响系数
+        // Severity and impact factors for weather events
         this.weatherImpacts = {
-            '暴雪': { severity: 'severe', impactFactor: -0.25, icon: 'fas fa-snowflake' },
-            '冰暴': { severity: 'severe', impactFactor: -0.30, icon: 'fas fa-icicles' },
-            '严寒': { severity: 'severe', impactFactor: -0.20, icon: 'fas fa-thermometer-empty' },
-            '洪水': { severity: 'severe', impactFactor: -0.35, icon: 'fas fa-water' },
-            '冰雹': { severity: 'moderate', impactFactor: -0.15, icon: 'fas fa-cloud-hail' },
-            '龙卷风': { severity: 'severe', impactFactor: -0.40, icon: 'fas fa-tornado' },
-            '热浪': { severity: 'moderate', impactFactor: -0.12, icon: 'fas fa-temperature-high' },
-            '雷暴': { severity: 'moderate', impactFactor: -0.08, icon: 'fas fa-bolt' },
-            '干旱': { severity: 'moderate', impactFactor: -0.10, icon: 'fas fa-sun' },
-            '飓风残余': { severity: 'severe', impactFactor: -0.28, icon: 'fas fa-hurricane' },
-            '早霜': { severity: 'mild', impactFactor: -0.05, icon: 'fas fa-snowflake' },
-            '暴雨': { severity: 'moderate', impactFactor: -0.12, icon: 'fas fa-cloud-rain' },
-            '春汛': { severity: 'moderate', impactFactor: -0.18, icon: 'fas fa-water' },
-            '森林火灾': { severity: 'severe', impactFactor: -0.22, icon: 'fas fa-fire' },
-            '滑坡': { severity: 'severe', impactFactor: -0.25, icon: 'fas fa-mountain' },
-            '大风': { severity: 'mild', impactFactor: -0.08, icon: 'fas fa-wind' }
+            'Blizzard': { severity: 'severe', impactFactor: -0.25, icon: 'fas fa-snowflake' },
+            'Ice Storm': { severity: 'severe', impactFactor: -0.30, icon: 'fas fa-icicles' },
+            'Extreme Cold': { severity: 'severe', impactFactor: -0.20, icon: 'fas fa-thermometer-empty' },
+            'Flood': { severity: 'severe', impactFactor: -0.35, icon: 'fas fa-water' },
+            'Hailstorm': { severity: 'moderate', impactFactor: -0.15, icon: 'fas fa-cloud-hail' },
+            'Tornado': { severity: 'severe', impactFactor: -0.40, icon: 'fas fa-tornado' },
+            'Heatwave': { severity: 'moderate', impactFactor: -0.12, icon: 'fas fa-temperature-high' },
+            'Thunderstorm': { severity: 'moderate', impactFactor: -0.08, icon: 'fas fa-bolt' },
+            'Drought': { severity: 'moderate', impactFactor: -0.10, icon: 'fas fa-sun' },
+            'Hurricane Remnants': { severity: 'severe', impactFactor: -0.28, icon: 'fas fa-hurricane' },
+            'Early Frost': { severity: 'mild', impactFactor: -0.05, icon: 'fas fa-snowflake' },
+            'Heavy Rain': { severity: 'moderate', impactFactor: -0.12, icon: 'fas fa-cloud-rain' },
+            'Spring Flood': { severity: 'moderate', impactFactor: -0.18, icon: 'fas fa-water' },
+            'Wildfire': { severity: 'severe', impactFactor: -0.22, icon: 'fas fa-fire' },
+            'Landslide': { severity: 'severe', impactFactor: -0.25, icon: 'fas fa-mountain' },
+            'High Winds': { severity: 'mild', impactFactor: -0.08, icon: 'fas fa-wind' }
         };
     }
 
     /**
-     * 获取指定时间范围内的季度
+     * Get quarters within a date range
      */
     getQuartersInRange(startDate, endDate) {
         const quarters = [];
@@ -87,7 +87,7 @@ class WeatherDataManager {
                 startDate: quarterStart,
                 endDate: quarterEnd,
                 season: this.getSeason(currentQuarter),
-                label: `${currentYear}年第${currentQuarter}季度`
+                label: `Q${currentQuarter} ${currentYear}`
             });
             
             currentQuarter++;
@@ -101,7 +101,7 @@ class WeatherDataManager {
     }
 
     /**
-     * 根据季度获取季节
+     * Get season from quarter
      */
     getSeason(quarter) {
         const seasons = ['winter', 'spring', 'summer', 'autumn'];
@@ -109,13 +109,13 @@ class WeatherDataManager {
     }
 
     /**
-     * 生成指定季度的天气事件
+     * Generate weather events for a given quarter
      */
     generateWeatherEvents(quarterInfo) {
         const events = [];
         const provinces = Object.keys(this.weatherPatterns);
         
-        // 每个季度生成3-8个随机天气事件
+        // Generate 3-8 random weather events per quarter
         const eventCount = Math.floor(Math.random() * 6) + 3;
         
         for (let i = 0; i < eventCount; i++) {
@@ -123,10 +123,10 @@ class WeatherDataManager {
             const seasonEvents = this.weatherPatterns[province][quarterInfo.season];
             const eventType = seasonEvents[Math.floor(Math.random() * seasonEvents.length)];
             
-            // 生成随机日期（在季度范围内）
+            // Generate random date within the quarter
             const eventDate = this.generateRandomDateInRange(quarterInfo.startDate, quarterInfo.endDate);
             
-            // 生成持续天数
+            // Generate duration
             const duration = Math.floor(Math.random() * 7) + 1;
             
             events.push({
@@ -139,14 +139,14 @@ class WeatherDataManager {
             });
         }
         
-        // 按日期排序
+        // Sort by date
         events.sort((a, b) => a.date - b.date);
         
         return events;
     }
 
     /**
-     * 生成随机日期
+     * Generate random date
      */
     generateRandomDateInRange(start, end) {
         const startTime = start.getTime();
@@ -156,34 +156,34 @@ class WeatherDataManager {
     }
 
     /**
-     * 生成天气事件描述
+     * Generate weather event description
      */
     generateEventDescription(eventType, province, duration) {
         const descriptions = {
-            '暴雪': `${province}地区遭遇强烈暴雪，积雪深度超过30厘米`,
-            '冰暴': `${province}出现严重冰暴天气，导致大面积停电`,
-            '严寒': `${province}经历极端低温，气温降至-30°C以下`,
-            '洪水': `${province}发生洪涝灾害，多条道路被淹`,
-            '冰雹': `${province}遭遇冰雹袭击，冰雹直径达2-5厘米`,
-            '龙卷风': `${province}出现龙卷风警报，风速超过200km/h`,
-            '热浪': `${province}经历极端高温，气温超过35°C`,
-            '雷暴': `${province}出现强雷暴天气，伴有强风和暴雨`,
-            '干旱': `${province}持续干旱，降水量比往年同期减少70%`,
-            '飓风残余': `${province}受飓风残余影响，出现强风暴雨`,
-            '早霜': `${province}出现异常早霜，影响农作物生长`,
-            '暴雨': `${province}遭遇暴雨袭击，24小时降水量超过100毫米`,
-            '春汛': `${province}春季融雪导致河流水位上涨`,
-            '森林火灾': `${province}发生大规模森林火灾，烟雾影响空气质量`,
-            '滑坡': `${province}山区因暴雨引发滑坡灾害`,
-            '大风': `${province}出现大风天气，阵风风力达8-10级`
+            'Blizzard': `${province} was hit by a severe blizzard with snow over 30 cm deep`,
+            'Ice Storm': `${province} experienced a major ice storm causing widespread power outages`,
+            'Extreme Cold': `${province} faced extreme cold with temperatures dropping below -30°C`,
+            'Flood': `${province} suffered flooding with multiple roads submerged`,
+            'Hailstorm': `${province} was struck by hail with stones 2-5 cm in diameter`,
+            'Tornado': `${province} issued a tornado warning with winds over 200 km/h`,
+            'Heatwave': `${province} endured extreme heat with temperatures above 35°C`,
+            'Thunderstorm': `${province} had severe thunderstorms with strong winds and heavy rain`,
+            'Drought': `${province} experienced prolonged drought with 70% less rainfall than average`,
+            'Hurricane Remnants': `${province} was impacted by hurricane remnants bringing strong winds and rain`,
+            'Early Frost': `${province} saw an unusually early frost affecting crops`,
+            'Heavy Rain': `${province} was hit by heavy rain exceeding 100 mm in 24 hours`,
+            'Spring Flood': `${province} dealt with spring melt flooding as river levels rose`,
+            'Wildfire': `${province} suffered a large wildfire, with smoke affecting air quality`,
+            'Landslide': `Landslides triggered by heavy rain occurred in ${province}`,
+            'High Winds': `${province} experienced high winds with gusts up to 100 km/h`
         };
-        
-        const baseDescription = descriptions[eventType] || `${province}出现${eventType}天气`;
-        return `${baseDescription}，持续${duration}天，对零售业务造成显著影响。`;
+
+        const baseDescription = descriptions[eventType] || `${province} experienced ${eventType} conditions`;
+        return `${baseDescription}, lasting ${duration} days, causing significant impact on retail operations.`;
     }
 
     /**
-     * 计算天气事件对销售的综合影响
+     * Calculate overall sales impact from weather events
      */
     calculateWeatherImpact(events) {
         let totalImpact = 0;
@@ -221,7 +221,7 @@ class WeatherDataManager {
     }
 
     /**
-     * 获取天气事件的统计数据
+     * Get statistics for weather events
      */
     getWeatherStats(events) {
         const stats = {};
@@ -240,7 +240,7 @@ class WeatherDataManager {
             stats[event.type].provinces.add(event.province);
         });
         
-        // 转换Set为数组
+        // Convert Set to array
         Object.keys(stats).forEach(type => {
             stats[type].provinces = Array.from(stats[type].provinces);
         });

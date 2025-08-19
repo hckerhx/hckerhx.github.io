@@ -1,5 +1,5 @@
 /* ===================
-   全局样式和重置
+   Global Styles and Reset
    =================== */
 * {
     margin: 0;
@@ -22,7 +22,7 @@ body {
 }
 
 /* ===================
-   头部样式
+   Header Styles
    =================== */
 .header {
     background: rgba(255, 255, 255, 0.95);
@@ -64,7 +64,7 @@ body {
 }
 
 /* ===================
-   主要内容区域
+   Main Content Area
    =================== */
 .main {
     flex: 1;
@@ -102,7 +102,7 @@ body {
 }
 
 /* ===================
-   表单样式
+   Form Styles
    =================== */
 .time-form {
     display: grid;
@@ -166,7 +166,7 @@ body {
 }
 
 /* ===================
-   信息框样式
+   Info Box Styles
    =================== */
 .info-box {
     background: linear-gradient(135deg, #eff6ff, #f0f9ff);
@@ -191,7 +191,7 @@ body {
 }
 
 /* ===================
-   季度信息样式
+   Quarter Info Styles
    =================== */
 .quarter-info {
     display: grid;
@@ -241,7 +241,7 @@ body {
 }
 
 /* ===================
-   天气事件样式
+   Weather Event Styles
    =================== */
 .weather-events {
     display: grid;
@@ -312,7 +312,7 @@ body {
 }
 
 /* ===================
-   图表容器样式
+   Chart Container Styles
    =================== */
 .chart-container {
     position: relative;
@@ -323,7 +323,7 @@ body {
 }
 
 /* ===================
-   统计网格样式
+   Statistics Grid Styles
    =================== */
 .stats-grid {
     display: grid;
@@ -373,7 +373,7 @@ body {
 }
 
 /* ===================
-   加载状态样式
+   Loading State Styles
    =================== */
 .loading-section {
     text-align: center;
@@ -395,7 +395,7 @@ body {
 }
 
 /* ===================
-   页脚样式
+   Footer Styles
    =================== */
 .footer {
     background: rgba(255, 255, 255, 0.95);
@@ -412,7 +412,7 @@ body {
 }
 
 /* ===================
-   工具类
+   Utilities
    =================== */
 .text-center {
     text-align: center;
@@ -423,7 +423,7 @@ body {
 }
 
 /* ===================
-   响应式设计
+   Responsive Design
    =================== */
 @media (max-width: 768px) {
     .container {
