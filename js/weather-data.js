@@ -109,6 +109,78 @@ class WeatherDataManager {
     }
 
     /**
+     * 尝试从API获取真实天气事件数据
+     * 如果API调用失败则回退到模拟数据
+     */
+    async fetchWeatherEvents(startDate, endDate) {
+        const start = new Date(startDate).toISOString();
+        const end = new Date(endDate).toISOString();
+        const apiUrl = `https://api.weather.gc.ca/collections/alerts/items?start=${start}&end=${end}&f=json`;
+
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error('API request failed');
+            }
+
+            const data = await response.json();
+            if (!data || !data.features) {
+                throw new Error('Invalid API response');
+            }
+
+            // API事件类型到本地事件类型的映射
+            const typeMap = {
+                'Snowfall Warning': '暴雪',
+                'Snow Squall Warning': '暴雪',
+                'Blizzard Warning': '暴雪',
+                'Freezing Rain Warning': '冰暴',
+                'Extreme Cold Warning': '严寒',
+                'Flood Warning': '洪水',
+                'Rainfall Warning': '暴雨',
+                'Heat Warning': '热浪',
+                'Wind Warning': '大风',
+                'Severe Thunderstorm Warning': '雷暴',
+                'Tornado Warning': '龙卷风',
+                'Dust Advisory': '干旱',
+                'Wildfire': '森林火灾'
+            };
+
+            const events = data.features.map(feature => {
+                const props = feature.properties || {};
+                const apiType = props.event || '未知天气';
+                const type = typeMap[apiType] || apiType;
+                const province = props.province || props.areaDesc || 'Unknown';
+                const eventStart = props.onset ? new Date(props.onset) : new Date(startDate);
+                const eventEnd = props.ended ? new Date(props.ended) : (props.expires ? new Date(props.expires) : eventStart);
+                const duration = Math.max(1, Math.ceil((eventEnd - eventStart) / (24 * 60 * 60 * 1000)));
+                const impact = this.weatherImpacts[type] || { severity: 'moderate', impactFactor: -0.1, icon: 'fas fa-exclamation-triangle' };
+                const description = props.description || `${province}出现${type}天气`;
+
+                return {
+                    type: type,
+                    province: province,
+                    date: eventStart,
+                    duration: duration,
+                    impact: impact,
+                    description: description
+                };
+            });
+
+            // 按日期排序
+            events.sort((a, b) => a.date - b.date);
+            return events;
+        } catch (error) {
+            console.warn('获取天气事件失败，使用模拟数据', error);
+            const quarters = this.getQuartersInRange(startDate, endDate);
+            let events = [];
+            for (const quarter of quarters) {
+                events = events.concat(this.generateWeatherEvents(quarter));
+            }
+            return events;
+        }
+    }
+
+    /**
      * 生成指定季度的天气事件
      */
     generateWeatherEvents(quarterInfo) {

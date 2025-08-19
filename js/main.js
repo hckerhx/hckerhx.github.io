@@ -146,8 +146,11 @@ class MetroWeatherAnalyzer {
         const analysisResults = [];
         
         for (const quarter of quarters) {
-            // 生成天气事件
-            const weatherEvents = this.weatherManager.generateWeatherEvents(quarter);
+            // 获取天气事件（优先使用API，失败则回退到模拟数据）
+            const weatherEvents = await this.weatherManager.fetchWeatherEvents(
+                quarter.startDate,
+                quarter.endDate
+            );
             
             // 计算销售影响
             const baseSales = this.salesCalculator.calculateBaseSales(quarter, quarter.year);
