@@ -1,122 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metro Quarterly Sales Weather Impact Analysis System</title>
+    <title>头部公司深跌买入策略实验室</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <header class="header">
+    <div class="language-switcher" role="group" aria-label="语言切换">
+        <button class="lang-button active" data-lang="zh">中文</button>
+        <button class="lang-button" data-lang="en">EN</button>
+    </div>
+
+    <header class="hero">
         <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-store"></i>
-                    <h1>Metro Weather Impact Analysis</h1>
+            <div class="hero-content">
+                <div class="hero-top">
+                    <div class="hero-label" data-i18n="hero.label">策略可视化平台</div>
                 </div>
-                <p class="subtitle">Analyze how extreme weather events affect Metro's quarterly sales in Canada</p>
+                <h1 data-i18n="hero.title">头部公司深跌买入策略实验室</h1>
+                <p class="hero-subtitle" data-i18n="hero.subtitle">
+                    当Mag 7与运动服饰行业龙头因宏观或财报事件急跌超过20%时逆向加仓，持有2-3年，
+                    并与长期定投 S&amp;P 500 与 QQQ的收益表现进行对比。
+                </p>
+                <div class="hero-metrics" id="heroMetrics"></div>
             </div>
         </div>
     </header>
 
-    <main class="main">
-        <div class="container">
-            <!-- Time selection section -->
-            <section class="time-selector-section">
-                <div class="card">
-                    <h2><i class="fas fa-calendar-alt"></i> Select Analysis Time Range</h2>
-                    <form class="time-form" id="timeForm">
-                        <div class="form-group">
-                            <label for="startDate">Start Date:</label>
-                            <input type="date" id="startDate" name="startDate" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="endDate">End Date:</label>
-                            <input type="date" id="endDate" name="endDate" required>
-                        </div>
-                        
-                        <button type="submit" class="btn-primary">
-                            <i class="fas fa-search"></i> Run Analysis
-                        </button>
-                    </form>
-                    
-                    <div class="info-box">
-                        <i class="fas fa-info-circle"></i>
-                        <p>The system will automatically identify the quarters within the selected range and analyze how extreme weather events affect Metro's sales.</p>
-                    </div>
+    <main>
+        <section class="section">
+            <div class="container">
+                <div class="section-grid">
+                    <article class="card">
+                        <h2 data-i18n="sections.assumptionsTitle">策略核心假设</h2>
+                        <ul class="list">
+                            <li data-i18n="sections.assumptionsItems.0">聚焦具备稳定盈利和技术护城河的头部公司。</li>
+                            <li data-i18n="sections.assumptionsItems.1">当股价在一个季度内回撤超过20%时触发“深跌买入”。</li>
+                            <li data-i18n="sections.assumptionsItems.2">分批买入后持有2-3年，等待业绩与估值修复。</li>
+                            <li data-i18n="sections.assumptionsItems.3">持仓收益与 S&amp;P 500、QQQ 定投结果进行长期对照。</li>
+                        </ul>
+                    </article>
+                    <article class="card">
+                        <h2 data-i18n="sections.methodologyTitle">数据与方法</h2>
+                        <p data-i18n="sections.methodologyBody">
+                            历史回测区间覆盖2010-2024年。为突出策略的节奏与风险，我们将关键事件时间线、
+                            组合净值走势与核心指标一并呈现。定投参考组合假设每年等额投入并按年度再平衡，
+                            数据经过平滑处理以便突出相对趋势。
+                        </p>
+                        <div class="tag" data-i18n="sections.methodologyTag">结果以100为初始净值，数值为示意回测。</div>
+                    </article>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Analysis results section -->
-            <section class="results-section" id="resultsSection" style="display: none;">
-                <!-- Quarter information card -->
-                <div class="card">
-                    <h2><i class="fas fa-chart-line"></i> Quarterly Analysis Results</h2>
-                    <div class="quarter-info" id="quarterInfo">
-                        <!-- Quarter info will be generated here -->
-                    </div>
+        <section class="section">
+            <div class="container">
+                <h2 data-i18n="sections.mag7Title">Mag 7 策略 vs. 指数定投</h2>
+                <p class="section-intro" data-i18n="sections.mag7Intro">
+                    深跌买入策略在科技龙头上的表现显示出极强的反弹弹性，尤其在2020年疫情与2022年估值纠偏后，
+                    净值恢复速度明显快于被动定投组合。
+                </p>
+                <div class="chart-card">
+                    <canvas id="mag7Chart" aria-label="Mag 7 策略与指数定投对比折线图" role="img"></canvas>
                 </div>
+                <div class="signal-grid" id="mag7Signals"></div>
+            </div>
+        </section>
 
-                <!-- Weather event impact -->
-                <div class="card">
-                    <h3><i class="fas fa-cloud-rain"></i> Extreme Weather Event Impact</h3>
-                    <div class="weather-events" id="weatherEvents">
-                        <!-- Weather event list will be generated here -->
-                    </div>
+        <section class="section alt">
+            <div class="container">
+                <h2 data-i18n="sections.athleticTitle">运动服饰龙头回撤买入表现</h2>
+                <p class="section-intro" data-i18n="sections.athleticIntro">
+                    该策略在耐克、阿迪达斯、露露柠檬等龙头上同样呈现有效性，但周期性需求与库存周期
+                    使得回撤修复速度略慢于Mag 7。
+                </p>
+                <div class="chart-card">
+                    <canvas id="athleticChart" aria-label="运动服饰策略与指数定投对比折线图" role="img"></canvas>
                 </div>
+                <div class="signal-grid" id="athleticSignals"></div>
+            </div>
+        </section>
 
-                <!-- Sales trend chart -->
-                <div class="card">
-                    <h3><i class="fas fa-chart-area"></i> Sales Trend Analysis</h3>
-                    <div class="chart-container">
-                        <canvas id="salesChart" style="height: 400px;"></canvas>
-                    </div>
+        <section class="section">
+            <div class="container">
+                <h2 data-i18n="sections.metricsTitle">核心指标对比</h2>
+                <p class="section-intro" data-i18n="sections.metricsIntro">
+                    通过CAGR、最大回撤与收益稳定性，观察策略在不同资产池的风险收益特征，
+                    并与被动定投方案形成直观对照。
+                </p>
+                <div class="chart-card">
+                    <canvas id="metricsChart" aria-label="策略核心指标柱状图" role="img"></canvas>
                 </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-i18n="table.headers.strategy">策略</th>
+                                <th data-i18n="table.headers.cagr">CAGR</th>
+                                <th data-i18n="table.headers.maxDrawdown">最大回撤</th>
+                                <th data-i18n="table.headers.tenYear">十年总收益</th>
+                                <th data-i18n="table.headers.triggers">触发次数</th>
+                            </tr>
+                        </thead>
+                        <tbody id="metricsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-                <!-- Weather impact comparison -->
-                <div class="card">
-                    <h3><i class="fas fa-balance-scale"></i> Weather Impact Comparison</h3>
-                    <div class="chart-container">
-                        <canvas id="weatherImpactChart" style="height: 350px;"></canvas>
-                    </div>
-                </div>
-
-                <!-- Detailed statistics -->
-                <div class="card">
-                    <h3><i class="fas fa-table"></i> Detailed Statistics</h3>
-                    <div class="stats-grid" id="statsGrid">
-                        <!-- Statistics will be generated here -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- Loading state -->
-            <section class="loading-section" id="loadingSection" style="display: none;">
-                <div class="card text-center">
-                    <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
-                    </div>
-                    <h3>Analyzing data...</h3>
-                    <p>Please wait while the system processes your request and generates the report.</p>
-                </div>
-            </section>
-        </div>
+        <section class="section insights">
+            <div class="container">
+                <h2 data-i18n="sections.insightsTitle">策略洞察</h2>
+                <div class="insight-grid" id="insights"></div>
+            </div>
+        </section>
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 Metro Weather Impact Analysis System. A data analysis tool designed for Metro retailers in Canada.</p>
+            <p data-i18n="footer.note">数据用于策略示意，投资需结合实际财务状况与风险承受能力。</p>
         </div>
     </footer>
 
-    <script src="js/weather-data.js"></script>
-    <script src="js/sales-calculator.js"></script>
-    <script src="js/chart-utils.js"></script>
-    <script src="js/metro-store-weather.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

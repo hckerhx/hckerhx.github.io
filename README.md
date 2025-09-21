@@ -1,69 +1,36 @@
-# Metro Quarterly Sales Weather Impact Analysis System
+# Tactical Drawdown Strategy Lab
 
-> A specialized analysis tool for Metro retailers in Canada to evaluate the impact of extreme weather events on quarterly sales.
+一个用于展示“头部公司深跌买入”投资策略的静态网站，聚焦 Mag 7 科技龙头与运动服饰行业龙头在深度回撤后的表现，并与长期定投 S&P 500 及 QQQ 的结果进行对比。
 
-## 🎯 Overview
+## 🌐 关键特性
+- **中英双语界面**：页面右上角提供语言切换按钮，实时更新所有文本、图表标签与辅助说明。
+- **策略可视化**：通过折线图、柱状图和关键指标卡片对策略表现进行直观展示。
+- **触发信号与洞察**：列出重要触发年份、驱动因素及持有结果，帮助理解策略节奏。
 
-The Metro Quarterly Sales Weather Impact Analysis System helps Metro retailers analyze how extreme weather events affect quarterly sales. The system provides intuitive visualizations and detailed analysis reports that support multi-quarter spans.
+## 🚀 使用方式
+1. 克隆或下载本仓库。
+2. 在现代浏览器中直接打开 `index.html`。
+3. 使用右上角的语言切换按钮在中文和英文之间切换视图。
 
-## ✨ Features
-
-### 🔧 Core Functions
-- **Time Range Selection**: Users specify start and end dates, and the system automatically detects complete quarters.
-- **Quarter Recognition**: Identifies full quarters within the selected range.
-- **Weather Event Simulation**: Generates extreme weather events based on real patterns across Canadian provinces.
-- **Sales Impact Calculation**: Evaluates how weather events influence sales from multiple perspectives.
-- **Data Visualization**: Uses Chart.js to create interactive charts.
-- **Store Weather Query**: Retrieves example Metro store weather data (high/low temperatures, precipitation, sunshine hours) for the chosen period.
-
-### 📊 Analysis Dimensions
-- **Regional Analysis**: Covers six major Canadian provinces (Ontario, Quebec, BC, Alberta, Manitoba, Saskatchewan).
-- **Seasonal Analysis**: Considers seasonal weather patterns.
-- **Product Category Impact**: Assesses four categories—groceries, health products, household items, apparel & footwear.
-- **Severity Levels**: Classifies weather events as severe, moderate, or mild.
-
-### 📈 Visualizations
-- **Sales Trend Chart**: Baseline vs. actual sales comparison.
-- **Weather Impact Chart**: Aggregated impact of various weather events.
-- **Category Pie Chart**: Distribution of weather impact across product categories.
-- **Regional Radar Chart**: Weather event distribution and severity by province.
-
-### 📋 Data Statistics
-- **Summary**: Total weather events, sales totals, impact rating.
-- **Historical Comparison**: Comparison with the same period last year.
-- **Forecast Suggestions**: Business recommendations based on the analysis.
-
-## 🚀 Usage
-
-1. Open `index.html`.
-2. Select the start and end dates.
-3. Click **Run Analysis**.
-4. Review the generated report.
-
-## 🏗️ Project Structure
-
+## 🧱 项目结构
 ```
-├── index.html              # Main page
+├── index.html          # 主页面
 ├── css/
-│   └── style.css           # Main stylesheet
+│   └── style.css       # 页面样式
 ├── js/
-│   ├── main.js             # Application logic
-│   ├── weather-data.js     # Weather data simulation
-│   ├── sales-calculator.js # Sales impact calculator
-│   ├── chart-utils.js      # Chart utilities
-│   └── metro-store-weather.js # Sample store weather
-└── README.md               # Documentation
+│   └── app.js          # 数据、可视化与国际化逻辑
+└── README.md           # 项目说明
 ```
 
-## 📞 Support
+## 🛠️ 技术栈
+- 纯静态 HTML + CSS
+- 原生 JavaScript
+- [Chart.js](https://www.chartjs.org/) 用于图表渲染
 
-- Modern browser (Chrome 80+, Firefox 75+, Safari 13+, Edge 80+)
-- JavaScript enabled
-- Internet connection for CDN resources
+## 📋 浏览器支持
+- Chrome 80+
+- Firefox 75+
+- Safari 13+
+- Edge 80+
 
----
-
-**Development Team**: Metro Data Analysis Team  
-**Last Update**: December 2024  
-**Version**: 1.0.0
-
+> 本项目所含数据仅用于策略示意，不构成投资建议。
