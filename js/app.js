@@ -2,14 +2,12 @@ const years = Array.from({ length: 15 }, (_, idx) => 2010 + idx);
 
 const series = {
     mag7Strategy: [100, 88, 110, 145, 180, 150, 210, 270, 210, 310, 230, 380, 290, 420, 520],
-    athleticStrategy: [100, 90, 105, 125, 150, 135, 165, 200, 170, 220, 180, 250, 210, 260, 310],
     sp500DCA: [100, 104.0, 116.5, 130.5, 146.2, 152.0, 170.2, 190.6, 198.2, 222.0, 195.4, 218.8, 205.7, 230.4, 258.0],
     qqqDCA: [100, 105.0, 123.9, 146.2, 172.5, 203.5, 213.7, 252.2, 244.6, 288.6, 262.6, 309.9, 263.4, 310.8, 366.7]
 };
 
 const strategyLabels = {
     mag7Strategy: { zh: 'Mag 7 深跌买入', en: 'Mag 7 Tactical Drawdown' },
-    athleticStrategy: { zh: '运动服饰深跌买入', en: 'Athletic Leaders Drawdown' },
     sp500DCA: { zh: 'S&P 500 定投', en: 'S&P 500 DCA' },
     qqqDCA: { zh: 'QQQ 定投', en: 'QQQ DCA' }
 };
@@ -22,7 +20,7 @@ const translations = {
         hero: {
             label: '策略可视化平台',
             title: '头部公司深跌买入策略实验室',
-            subtitle: '当Mag 7与运动服饰行业龙头因宏观或财报事件急跌超过20%时逆向加仓，持有2-3年，并与长期定投 S&P 500 与 QQQ的收益表现进行对比。',
+            subtitle: '当Mag 7 科技龙头因宏观或财报事件急跌超过20%时逆向加仓，持有2-3年，并与长期定投 S&P 500 与 QQQ 的表现进行对比，同时跟踪实时组合净值。',
             cards: [
                 {
                     title: 'Mag 7 策略 CAGR',
@@ -54,8 +52,10 @@ const translations = {
             methodologyTag: '结果以100为初始净值，数值为示意回测。',
             mag7Title: 'Mag 7 策略 vs. 指数定投',
             mag7Intro: '深跌买入策略在科技龙头上的表现显示出极强的反弹弹性，尤其在2020年疫情与2022年估值纠偏后，净值恢复速度明显快于被动定投组合。',
-            athleticTitle: '运动服饰龙头回撤买入表现',
-            athleticIntro: '该策略在耐克、阿迪达斯、露露柠檬等龙头上同样呈现有效性，但周期性需求与库存周期使得回撤修复速度略慢于Mag 7。',
+            timelineTitle: 'Mag 7 策略操作时间线',
+            timelineIntro: '追踪每次深跌买入的触发背景、加仓节奏与持有结果，理解策略在不同宏观周期下的执行细节。',
+            liveTitle: '实时组合净值对比',
+            liveIntro: '通过接入 Yahoo Finance API，等权跟踪 Mag 7 组合，并与 SPY、QQQ 的日内表现进行实时比较。',
             metricsTitle: '核心指标对比',
             metricsIntro: '通过CAGR、最大回撤与收益稳定性，观察策略在不同资产池的风险收益特征，并与被动定投方案形成直观对照。',
             insightsTitle: '策略洞察'
@@ -79,8 +79,21 @@ const translations = {
                 volatility: '年化波动率'
             },
             mag7Aria: 'Mag 7 策略与指数定投对比折线图',
-            athleticAria: '运动服饰策略与指数定投对比折线图',
             metricsAria: '策略核心指标柱状图'
+        },
+        timeline: {
+            contextLabel: '背景',
+            actionLabel: '执行',
+            resultLabel: '持有结果'
+        },
+        live: {
+            mag7Title: 'Mag 7 等权组合',
+            spTitle: 'S&P 500 (SPY)',
+            qqqTitle: '纳斯达克 100 (QQQ)',
+            valueLabel: '当前指数',
+            changeLabel: '日内变动',
+            updated: '数据更新：',
+            error: '无法从 Yahoo Finance 获取实时数据，请稍后重试。'
         },
         holdResultLabel: '持有结果：',
         footer: {
@@ -94,7 +107,7 @@ const translations = {
         hero: {
             label: 'Strategy Visualization Lab',
             title: 'Tactical Drawdown Strategy Lab for Market Leaders',
-            subtitle: 'Buy aggressively when Mag 7 and athletic leaders plunge more than 20% on macro or earnings shocks, hold for 2-3 years, and compare against long-term DCA into the S&P 500 and QQQ.',
+            subtitle: 'Buy aggressively when Mag 7 leaders plunge more than 20% on macro or earnings shocks, hold for 2-3 years, benchmark against long-term DCA in the S&P 500 and QQQ, and monitor live portfolio values.',
             cards: [
                 {
                     title: 'Mag 7 Strategy CAGR',
@@ -126,8 +139,10 @@ const translations = {
             methodologyTag: 'Results assume 100 starting NAV; values are illustrative.',
             mag7Title: 'Mag 7 Strategy vs. Index DCA',
             mag7Intro: 'The drawdown-buy discipline shows powerful rebound elasticity in mega-cap tech, especially after the 2020 pandemic shock and 2022 de-rating, with NAV recovering faster than passive DCA.',
-            athleticTitle: 'Athletic Leaders Drawdown Performance',
-            athleticIntro: 'The approach also works for Nike, Adidas, and Lululemon, though cyclical demand and inventory turns mean recoveries trail the Mag 7 cohort.',
+            timelineTitle: 'Mag 7 Trade Timeline',
+            timelineIntro: 'Follow each deep-drawdown entry, the macro catalyst behind it, execution cadence, and holding outcome across market cycles.',
+            liveTitle: 'Live Portfolio Value Check',
+            liveIntro: 'Connect to the Yahoo Finance API to track an equal-weight Mag 7 basket in real time against SPY and QQQ intraday moves.',
             metricsTitle: 'Key Metrics Comparison',
             metricsIntro: 'Review CAGR, max drawdown, and return stability to understand risk-reward across universes versus passive DCA.',
             insightsTitle: 'Strategy Insights'
@@ -151,8 +166,21 @@ const translations = {
                 volatility: 'Annual Volatility'
             },
             mag7Aria: 'Line chart comparing the Mag 7 strategy with index DCA baselines',
-            athleticAria: 'Line chart comparing the athletic strategy with index DCA baselines',
             metricsAria: 'Bar chart showing core strategy metrics'
+        },
+        timeline: {
+            contextLabel: 'Backdrop',
+            actionLabel: 'Execution',
+            resultLabel: 'Outcome'
+        },
+        live: {
+            mag7Title: 'Mag 7 Equal-Weight Basket',
+            spTitle: 'S&P 500 (SPY)',
+            qqqTitle: 'NASDAQ 100 (QQQ)',
+            valueLabel: 'Current Index',
+            changeLabel: 'Day Move',
+            updated: 'Last updated: ',
+            error: 'Unable to reach Yahoo Finance right now. Please try again later.'
         },
         holdResultLabel: 'Holding outcome:',
         footer: {
@@ -161,13 +189,18 @@ const translations = {
     }
 };
 
-const mag7Signals = [
+const timelineEvents = [
     {
-        year: 2011,
-        drop: { zh: '-28% 回撤', en: '-28% drawdown' },
-        driver: {
-            zh: '欧债危机导致全球流动性收紧，Mag 7 普遍出现财报指引下调。',
-            en: 'Eurozone stress drained global liquidity and Mag 7 guidance trended lower.'
+        date: '2011-08',
+        title: { zh: '欧债危机流动性收紧', en: 'Eurozone Liquidity Shock' },
+        drop: { zh: '-28% 回撤触发', en: '-28% drawdown trigger' },
+        context: {
+            zh: '欧债危机导致全球流动性收紧，苹果、微软、亚马逊纷纷下调营收指引。',
+            en: 'Eurozone stress drained liquidity and Apple, Microsoft, Amazon cut revenue guidance.'
+        },
+        execution: {
+            zh: '等权加仓 AAPL、MSFT、GOOGL，三周内完成分批建仓并同时卖出隐含波动率。',
+            en: 'Scaled into equal-weight AAPL, MSFT, and GOOGL over three weeks while harvesting implied vol.'
         },
         outcome: {
             zh: '两年持有收益 +45%，龙头凭借现金流重新估值。',
@@ -175,11 +208,16 @@ const mag7Signals = [
         }
     },
     {
-        year: 2015,
-        drop: { zh: '-25% 回撤', en: '-25% drawdown' },
-        driver: {
-            zh: '强美元与硬件周期下行，苹果、微软指引保守。',
-            en: 'A strong dollar and hardware slump led Apple and Microsoft to guide cautiously.'
+        date: '2015-09',
+        title: { zh: '强美元压制硬件周期', en: 'Dollar Surge Hits Hardware Cycle' },
+        drop: { zh: '-25% 回撤触发', en: '-25% drawdown trigger' },
+        context: {
+            zh: '强美元与 PC/手机换机疲软，微软与苹果的盈利预期同步下修。',
+            en: 'A surging dollar and weak PC/mobile refresh cycle pulled Microsoft and Apple guidance lower.'
+        },
+        execution: {
+            zh: '在财报空窗期内逐步买入 NVDA、MSFT、AMZN，同时将 META、TSLA 控制在较低权重。',
+            en: 'Accumulated NVDA, MSFT, and AMZN through the earnings quiet period while keeping META and TSLA lighter.'
         },
         outcome: {
             zh: '2016-2017 年云计算扩张使组合收益翻倍。',
@@ -187,11 +225,16 @@ const mag7Signals = [
         }
     },
     {
-        year: 2018,
-        drop: { zh: '-30% 回撤', en: '-30% drawdown' },
-        driver: {
-            zh: '美联储加息与贸易摩擦叠加，科技成长股估值压缩。',
-            en: 'Fed tightening plus trade tensions compressed growth-stock multiples.'
+        date: '2018-12',
+        title: { zh: '贸易摩擦与加息共振', en: 'Trade Tensions Meet Fed Tightening' },
+        drop: { zh: '-30% 回撤触发', en: '-30% drawdown trigger' },
+        context: {
+            zh: '美联储持续加息与贸易摩擦叠加，成长股估值被系统性压缩。',
+            en: 'Aggressive Fed hikes and trade disputes compressed growth valuations across the board.'
+        },
+        execution: {
+            zh: '分三批买入所有 Mag 7 成员，并通过卖出 QQQ 看跌期权获取额外权利金。',
+            en: 'Added all Mag 7 names in three tranches and monetized QQQ puts for extra premium.'
         },
         outcome: {
             zh: '持有 24 个月后净值创历史新高，超越 S&P 500 定投 80 个百分点。',
@@ -199,11 +242,16 @@ const mag7Signals = [
         }
     },
     {
-        year: 2020,
-        drop: { zh: '-35% 回撤', en: '-35% drawdown' },
-        driver: {
-            zh: '疫情冲击需求与供应链，市场情绪极度悲观。',
-            en: 'Pandemic demand shock and supply-chain disruption crushed sentiment.'
+        date: '2020-03',
+        title: { zh: '疫情冲击远程经济崛起', en: 'Pandemic Shock, Remote Boom' },
+        drop: { zh: '-35% 回撤触发', en: '-35% drawdown trigger' },
+        context: {
+            zh: '疫情冲击需求与供应链，市场情绪极度悲观，科技龙头普遍暴跌。',
+            en: 'Pandemic demand collapse and supply-chain chaos sent mega-cap tech tumbling amid panic.'
+        },
+        execution: {
+            zh: '采用“3-5-7”分批法在两个季度内完成加仓，远程办公与云业务成为重点权重。',
+            en: 'Deployed a 3-5-7 tranche plan across two quarters, overweighting remote work and cloud beneficiaries.'
         },
         outcome: {
             zh: '2021 年底受益于远程经济与云服务，净值增幅 +65%。',
@@ -211,11 +259,16 @@ const mag7Signals = [
         }
     },
     {
-        year: 2022,
-        drop: { zh: '-32% 回撤', en: '-32% drawdown' },
-        driver: {
-            zh: '加息与盈利增速放缓导致估值重估。',
-            en: 'Rising rates and slower earnings growth forced a valuation reset.'
+        date: '2022-10',
+        title: { zh: '估值重置与 AI 预期', en: 'Valuation Reset Sets Up AI' },
+        drop: { zh: '-32% 回撤触发', en: '-32% drawdown trigger' },
+        context: {
+            zh: '加息与盈利增速放缓导致估值重估，但 GPU 与 AI 云支出出现领先指标。',
+            en: 'Rising rates and slower earnings forced a reset while GPU and AI cloud demand flashed early signals.'
+        },
+        execution: {
+            zh: '集中增持 NVDA、MSFT，并以备兑开仓策略管理 TSLA 波动性。',
+            en: 'Concentrated in NVDA and MSFT while writing covered calls to manage TSLA volatility.'
         },
         outcome: {
             zh: '2024 年 AI 主题驱动，策略净值突破 5 倍。',
@@ -224,68 +277,16 @@ const mag7Signals = [
     }
 ];
 
-const athleticSignals = [
-    {
-        year: 2012,
-        drop: { zh: '-22% 回撤', en: '-22% drawdown' },
-        driver: {
-            zh: '欧洲债务危机拖累耐克与阿迪达斯渠道，订单削减。',
-            en: 'Euro debt turmoil cut Nike and Adidas orders across channels.'
-        },
-        outcome: {
-            zh: '2013-2014 年全球运动风潮回归，净值修复 +30%。',
-            en: '2013-2014 global athleisure rebound restored NAV by +30%.'
-        }
+const yahooConfig = {
+    endpoint: 'https://query1.finance.yahoo.com/v7/finance/quote',
+    symbols: ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA', 'TSLA', 'SPY', 'QQQ'],
+    groups: {
+        mag7: ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA', 'TSLA'],
+        sp500: ['SPY'],
+        qqq: ['QQQ']
     },
-    {
-        year: 2015,
-        drop: { zh: '-24% 回撤', en: '-24% drawdown' },
-        driver: {
-            zh: '北美库存高企与美元升值压缩利润。',
-            en: 'North American inventory and a stronger dollar squeezed margins.'
-        },
-        outcome: {
-            zh: '2016-2017 年大中华区与直销渠道驱动，净值反弹 +40%。',
-            en: 'Greater China and direct-to-consumer growth in 2016-2017 lifted NAV +40%.'
-        }
-    },
-    {
-        year: 2018,
-        drop: { zh: '-26% 回撤', en: '-26% drawdown' },
-        driver: {
-            zh: '贸易摩擦与批发渠道去库存造成压力。',
-            en: 'Trade frictions and wholesale destocking created pressure.'
-        },
-        outcome: {
-            zh: '2020 年前露露柠檬与线上渠道增长，累计收益 +32%。',
-            en: 'Lululemon and digital growth through 2020 delivered +32% cumulative gains.'
-        }
-    },
-    {
-        year: 2020,
-        drop: { zh: '-30% 回撤', en: '-30% drawdown' },
-        driver: {
-            zh: '疫情封锁造成门店关闭与供应链延误。',
-            en: 'Lockdowns closed stores and delayed supply chains.'
-        },
-        outcome: {
-            zh: '2022 年复苏后净值重新站上 2.5 倍。',
-            en: 'Post-2022 reopening lifted NAV back above 2.5x.'
-        }
-    },
-    {
-        year: 2022,
-        drop: { zh: '-21% 回撤', en: '-21% drawdown' },
-        driver: {
-            zh: '库存调整与美元走强再度压缩毛利。',
-            en: 'Inventory resets and a stronger dollar squeezed gross margins again.'
-        },
-        outcome: {
-            zh: '2024 年客单价上调与轻量化产品推动收益 +18%。',
-            en: 'By 2024 higher ticket sizes and lighter products added +18%.'
-        }
-    }
-];
+    refreshMs: 5 * 60 * 1000
+};
 
 const insightsData = [
     {
@@ -296,17 +297,17 @@ const insightsData = [
         }
     },
     {
-        title: { zh: '行业属性影响修复速度', en: 'Industry Traits Shape Recovery Speed' },
+        title: { zh: '时间线揭示执行节奏', en: 'Timeline Highlights Execution Cadence' },
         detail: {
-            zh: '运动服饰受库存周期与消费信心影响更大，深跌买入虽能捕捉反弹，但需要更长的持有耐心与分散配置。',
-            en: 'Athletic wear depends heavily on inventory cycles and sentiment, so rebounds take patience and diversified exposure.'
+            zh: '按时间线记录触发点与分批加仓步骤，帮助复盘在剧烈波动时的纪律与仓位控制。',
+            en: 'Documenting triggers and scaling steps clarifies discipline and position sizing during violent swings.'
         }
     },
     {
         title: { zh: '与指数定投互补', en: 'Complementary to Index DCA' },
         detail: {
-            zh: '策略提供在危机期加仓的纪律，而 S&P 500、QQQ 定投提供基准收益，组合管理上可通过仓位配比平滑波动。',
-            en: 'The strategy enforces crisis buying while S&P 500 and QQQ DCA deliver baseline growth; position sizing helps smooth volatility.'
+            zh: '策略提供在危机期加仓的纪律，而 S&P 500、QQQ 定投提供基准收益，实时监测有助于再平衡与风险控制。',
+            en: 'The strategy enforces crisis buying while S&P 500 and QQQ DCA deliver baseline growth, and live monitoring supports rebalancing and risk control.'
         }
     }
 ];
@@ -315,16 +316,19 @@ const state = {
     metrics: [],
     metricsById: {},
     heroValues: {},
-    signalCounts: {}
+    signalCounts: {},
+    liveData: null,
+    liveError: null,
+    lastUpdated: null
 };
 
 const charts = {
     mag7: null,
-    athletic: null,
     metrics: null
 };
 
 let currentLanguage = 'zh';
+let liveRefreshHandle = null;
 
 function calcCagr(values) {
     const yearsCount = values.length - 1;
@@ -374,6 +378,171 @@ function formatPercent(value, options = {}) {
     return `${percentage}%`;
 }
 
+function formatIndexValue(value, locale) {
+    if (typeof value !== 'number' || Number.isNaN(value)) {
+        return '--';
+    }
+    return new Intl.NumberFormat(locale, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(value);
+}
+
+function formatChangePercentValue(value, locale) {
+    if (typeof value !== 'number' || Number.isNaN(value)) {
+        return '--';
+    }
+    const formatter = new Intl.NumberFormat(locale, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        signDisplay: 'always'
+    });
+    return `${formatter.format(value)}%`;
+}
+
+function buildQuoteMap(quotes = []) {
+    return quotes.reduce((acc, quote) => {
+        if (quote && quote.symbol) {
+            acc[quote.symbol.toUpperCase()] = quote;
+        }
+        return acc;
+    }, {});
+}
+
+function computePortfolioSnapshot(symbols, quoteMap) {
+    let priceSum = 0;
+    let previousSum = 0;
+    let validCount = 0;
+
+    symbols.forEach(symbol => {
+        const quote = quoteMap[symbol];
+        if (!quote) return;
+
+        const price = Number(quote.regularMarketPrice ?? quote.postMarketPrice);
+        const changePercent = Number(quote.regularMarketChangePercent);
+        let previous = Number(quote.regularMarketPreviousClose);
+
+        if (!Number.isFinite(price)) return;
+        if (!Number.isFinite(previous)) {
+            if (Number.isFinite(changePercent) && changePercent !== -100) {
+                previous = price / (1 + changePercent / 100);
+            } else {
+                return;
+            }
+        }
+
+        if (!Number.isFinite(previous) || previous === 0) return;
+
+        priceSum += price;
+        previousSum += previous;
+        validCount += 1;
+    });
+
+    if (!validCount || !Number.isFinite(priceSum) || !Number.isFinite(previousSum) || previousSum === 0) {
+        return null;
+    }
+
+    const index = (priceSum / previousSum) * 100;
+    const changePercent = ((priceSum - previousSum) / previousSum) * 100;
+
+    return { index, changePercent };
+}
+
+function computeLiveData(quoteMap) {
+    return {
+        mag7: computePortfolioSnapshot(yahooConfig.groups.mag7, quoteMap),
+        sp500: computePortfolioSnapshot(yahooConfig.groups.sp500, quoteMap),
+        qqq: computePortfolioSnapshot(yahooConfig.groups.qqq, quoteMap)
+    };
+}
+
+function applyChangeClass(element, value) {
+    if (!element) return;
+    element.classList.remove('change-positive', 'change-negative');
+    if (typeof value !== 'number' || Number.isNaN(value) || value === 0) return;
+    if (value > 0) {
+        element.classList.add('change-positive');
+    } else {
+        element.classList.add('change-negative');
+    }
+}
+
+function renderLiveSection(lang) {
+    const locale = lang === 'zh' ? 'zh-CN' : 'en-US';
+    const liveLabels = translations[lang].live;
+    const cards = [
+        { key: 'mag7', valueId: 'mag7LiveValue', changeId: 'mag7LiveChange' },
+        { key: 'sp500', valueId: 'spLiveValue', changeId: 'spLiveChange' },
+        { key: 'qqq', valueId: 'qqqLiveValue', changeId: 'qqqLiveChange' }
+    ];
+
+    cards.forEach(({ key, valueId, changeId }) => {
+        const metrics = state.liveData ? state.liveData[key] : null;
+        const valueEl = document.getElementById(valueId);
+        const changeEl = document.getElementById(changeId);
+
+        if (valueEl) {
+            valueEl.textContent = metrics ? formatIndexValue(metrics.index, locale) : '--';
+        }
+        if (changeEl) {
+            const percentValue = metrics ? metrics.changePercent : null;
+            changeEl.textContent = metrics ? formatChangePercentValue(percentValue, locale) : '--';
+            applyChangeClass(changeEl, metrics ? percentValue : null);
+        }
+    });
+
+    const updatedEl = document.getElementById('liveUpdated');
+    if (updatedEl) {
+        if (state.lastUpdated) {
+            const formatter = new Intl.DateTimeFormat(locale, {
+                hour12: false,
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            updatedEl.textContent = `${liveLabels.updated}${formatter.format(state.lastUpdated)}`;
+        } else {
+            updatedEl.textContent = '';
+        }
+    }
+
+    const errorEl = document.getElementById('liveError');
+    if (errorEl) {
+        errorEl.textContent = state.liveError ? liveLabels.error : '';
+    }
+}
+
+async function loadLiveQuotes() {
+    try {
+        const url = `${yahooConfig.endpoint}?symbols=${yahooConfig.symbols.join(',')}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        const payload = await response.json();
+        const quotes = payload?.quoteResponse?.result || [];
+        const quoteMap = buildQuoteMap(quotes);
+        state.liveData = computeLiveData(quoteMap);
+        state.lastUpdated = new Date();
+        state.liveError = null;
+        renderLiveSection(currentLanguage);
+    } catch (error) {
+        console.error('Failed to fetch live quotes', error);
+        state.liveError = true;
+        renderLiveSection(currentLanguage);
+    }
+}
+
+function startLiveRefresh() {
+    if (liveRefreshHandle) {
+        clearInterval(liveRefreshHandle);
+    }
+    loadLiveQuotes();
+    liveRefreshHandle = setInterval(loadLiveQuotes, yahooConfig.refreshMs);
+}
+
 function createMetricCard({ title, value, description }) {
     const wrapper = document.createElement('div');
     wrapper.className = 'metric-card';
@@ -400,35 +569,57 @@ function renderHeroMetrics(cards) {
     cards.forEach(metric => container.appendChild(createMetricCard(metric)));
 }
 
-function renderSignals(containerId, signals, lang, holdLabel) {
-    const wrapper = document.getElementById(containerId);
-    wrapper.innerHTML = '';
-    signals.forEach(signal => {
-        const card = document.createElement('article');
-        card.className = 'signal-card';
+function renderTimeline(events, lang, labels) {
+    const container = document.getElementById('timeline');
+    if (!container) return;
+    container.innerHTML = '';
 
-        const year = document.createElement('span');
-        year.className = 'signal-year';
-        year.textContent = signal.year;
+    events.forEach(event => {
+        const item = document.createElement('div');
+        item.className = 'timeline-item';
 
-        const drop = document.createElement('span');
-        drop.className = 'signal-drop';
-        drop.textContent = signal.drop[lang];
+        const marker = document.createElement('span');
+        marker.className = 'timeline-marker';
 
-        const driver = document.createElement('p');
-        driver.className = 'signal-desc';
-        driver.textContent = signal.driver[lang];
+        const content = document.createElement('div');
+        content.className = 'timeline-content';
 
-        const outcome = document.createElement('p');
-        outcome.className = 'signal-desc';
+        const dateEl = document.createElement('span');
+        dateEl.className = 'timeline-date';
+        dateEl.textContent = event.date;
+
+        const titleEl = document.createElement('h3');
+        titleEl.className = 'timeline-title';
+        titleEl.textContent = event.title[lang];
+
+        const dropEl = document.createElement('span');
+        dropEl.className = 'timeline-drop';
+        dropEl.textContent = event.drop[lang];
+
+        const contextEl = document.createElement('p');
+        contextEl.className = 'timeline-text';
+        const contextLabel = document.createElement('strong');
+        contextLabel.textContent = labels.contextLabel;
+        contextEl.appendChild(contextLabel);
+        contextEl.append(` ${event.context[lang]}`);
+
+        const executionEl = document.createElement('p');
+        executionEl.className = 'timeline-text';
+        const executionLabel = document.createElement('strong');
+        executionLabel.textContent = labels.actionLabel;
+        executionEl.appendChild(executionLabel);
+        executionEl.append(` ${event.execution[lang]}`);
+
+        const outcomeEl = document.createElement('p');
+        outcomeEl.className = 'timeline-text';
         const outcomeLabel = document.createElement('strong');
-        outcomeLabel.textContent = holdLabel;
-        outcome.appendChild(outcomeLabel);
-        const prefix = lang === 'zh' ? '' : ' ';
-        outcome.append(`${prefix}${signal.outcome[lang]}`);
+        outcomeLabel.textContent = labels.resultLabel;
+        outcomeEl.appendChild(outcomeLabel);
+        outcomeEl.append(` ${event.outcome[lang]}`);
 
-        card.append(year, drop, driver, outcome);
-        wrapper.appendChild(card);
+        content.append(dateEl, titleEl, dropEl, contextEl, executionEl, outcomeEl);
+        item.append(marker, content);
+        container.appendChild(item);
     });
 }
 
@@ -593,9 +784,8 @@ function renderHeroMetricsSection(lang) {
     renderHeroMetrics(cards);
 }
 
-function renderSignalsSection(lang) {
-    renderSignals('mag7Signals', mag7Signals, lang, translations[lang].holdResultLabel);
-    renderSignals('athleticSignals', athleticSignals, lang, translations[lang].holdResultLabel);
+function renderTimelineSection(lang) {
+    renderTimeline(timelineEvents, lang, translations[lang].timeline);
 }
 
 function renderInsightsSection(lang) {
@@ -612,38 +802,6 @@ function renderCharts(lang) {
                 data: series.mag7Strategy,
                 borderColor: '#38bdf8',
                 backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                borderWidth: 3,
-                tension: 0.35
-            },
-            {
-                label: strategyLabels.sp500DCA[lang],
-                data: series.sp500DCA,
-                borderColor: '#94a3b8',
-                backgroundColor: 'rgba(148, 163, 184, 0.15)',
-                borderWidth: 2,
-                tension: 0.35
-            },
-            {
-                label: strategyLabels.qqqDCA[lang],
-                data: series.qqqDCA,
-                borderColor: '#f97316',
-                backgroundColor: 'rgba(249, 115, 22, 0.12)',
-                borderWidth: 2,
-                tension: 0.35
-            }
-        ],
-        { yAxisLabel: translations[lang].charts.navLabel }
-    );
-
-    if (charts.athletic) charts.athletic.destroy();
-    charts.athletic = buildLineChart(
-        document.getElementById('athleticChart'),
-        [
-            {
-                label: strategyLabels.athleticStrategy[lang],
-                data: series.athleticStrategy,
-                borderColor: '#22d3ee',
-                backgroundColor: 'rgba(34, 211, 238, 0.12)',
                 borderWidth: 3,
                 tension: 0.35
             },
@@ -685,7 +843,6 @@ function renderTable(lang) {
 
 function updateAriaLabels(lang) {
     document.getElementById('mag7Chart').setAttribute('aria-label', translations[lang].charts.mag7Aria);
-    document.getElementById('athleticChart').setAttribute('aria-label', translations[lang].charts.athleticAria);
     document.getElementById('metricsChart').setAttribute('aria-label', translations[lang].charts.metricsAria);
     const switcher = document.querySelector('.language-switcher');
     if (switcher) {
@@ -704,11 +861,12 @@ function setLanguage(lang) {
 
     translateStatic(lang);
     renderHeroMetricsSection(lang);
-    renderSignalsSection(lang);
+    renderTimelineSection(lang);
     renderInsightsSection(lang);
     renderCharts(lang);
     renderTable(lang);
     updateAriaLabels(lang);
+    renderLiveSection(lang);
 }
 
 function setupLanguageSwitcher() {
@@ -732,13 +890,6 @@ function init() {
             tenYearReturn: calcTenYearReturn(series.mag7Strategy)
         },
         {
-            id: 'athleticStrategy',
-            cagr: calcCagr(series.athleticStrategy),
-            maxDrawdown: calcMaxDrawdown(series.athleticStrategy),
-            volatility: calcVolatility(series.athleticStrategy),
-            tenYearReturn: calcTenYearReturn(series.athleticStrategy)
-        },
-        {
             id: 'sp500DCA',
             cagr: calcCagr(series.sp500DCA),
             maxDrawdown: calcMaxDrawdown(series.sp500DCA),
@@ -760,8 +911,7 @@ function init() {
         return acc;
     }, {});
     state.signalCounts = {
-        mag7Strategy: mag7Signals.length,
-        athleticStrategy: athleticSignals.length,
+        mag7Strategy: timelineEvents.length,
         sp500DCA: 0,
         qqqDCA: 0
     };
@@ -777,6 +927,7 @@ function init() {
 
     setupLanguageSwitcher();
     setLanguage(currentLanguage);
+    startLiveRefresh();
 }
 
 document.addEventListener('DOMContentLoaded', init);

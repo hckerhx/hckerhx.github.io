@@ -13,6 +13,7 @@
         <button class="lang-button active" data-lang="zh">中文</button>
         <button class="lang-button" data-lang="en">EN</button>
     </div>
+
     <header class="hero">
         <div class="container">
             <div class="hero-content">
@@ -21,8 +22,8 @@
                 </div>
                 <h1 data-i18n="hero.title">头部公司深跌买入策略实验室</h1>
                 <p class="hero-subtitle" data-i18n="hero.subtitle">
-                    当Mag 7与运动服饰行业龙头因宏观或财报事件急跌超过20%时逆向加仓，持有2-3年，
-                    并与长期定投 S&amp;P 500 与 QQQ的收益表现进行对比。
+                    当Mag 7 科技龙头因宏观或财报事件急跌超过20%时逆向加仓，持有2-3年，
+                    并与长期定投 S&amp;P 500 与 QQQ 的表现进行对比，同时跟踪实时组合净值。
                 </p>
                 <div class="hero-metrics" id="heroMetrics"></div>
             </div>
@@ -65,21 +66,62 @@
                 <div class="chart-card">
                     <canvas id="mag7Chart" aria-label="Mag 7 策略与指数定投对比折线图" role="img"></canvas>
                 </div>
-                <div class="signal-grid" id="mag7Signals"></div>
             </div>
         </section>
 
         <section class="section alt">
             <div class="container">
-                <h2 data-i18n="sections.athleticTitle">运动服饰龙头回撤买入表现</h2>
-                <p class="section-intro" data-i18n="sections.athleticIntro">
-                    该策略在耐克、阿迪达斯、露露柠檬等龙头上同样呈现有效性，但周期性需求与库存周期
-                    使得回撤修复速度略慢于Mag 7。
+                <h2 data-i18n="sections.timelineTitle">Mag 7 策略操作时间线</h2>
+                <p class="section-intro" data-i18n="sections.timelineIntro">
+                    追踪每次深跌买入的触发背景、加仓节奏与持有结果，理解策略在不同宏观周期下的执行细节。
                 </p>
-                <div class="chart-card">
-                    <canvas id="athleticChart" aria-label="运动服饰策略与指数定投对比折线图" role="img"></canvas>
+                <div class="timeline" id="timeline"></div>
+            </div>
+        </section>
+
+        <section class="section live">
+            <div class="container">
+                <h2 data-i18n="sections.liveTitle">实时组合净值对比</h2>
+                <p class="section-intro" data-i18n="sections.liveIntro">
+                    通过接入 Yahoo Finance API，等权跟踪 Mag 7 组合，并与 SPY、QQQ 的日内表现进行实时比较。
+                </p>
+                <div class="live-grid">
+                    <article class="live-card" id="liveMag7">
+                        <h3 data-i18n="live.mag7Title">Mag 7 等权组合</h3>
+                        <div class="live-metric">
+                            <span class="live-label" data-i18n="live.valueLabel">当前指数</span>
+                            <span class="live-value" id="mag7LiveValue">--</span>
+                        </div>
+                        <div class="live-metric">
+                            <span class="live-label" data-i18n="live.changeLabel">日内变动</span>
+                            <span class="live-change" id="mag7LiveChange">--</span>
+                        </div>
+                    </article>
+                    <article class="live-card" id="liveSp500">
+                        <h3 data-i18n="live.spTitle">S&amp;P 500 (SPY)</h3>
+                        <div class="live-metric">
+                            <span class="live-label" data-i18n="live.valueLabel">当前指数</span>
+                            <span class="live-value" id="spLiveValue">--</span>
+                        </div>
+                        <div class="live-metric">
+                            <span class="live-label" data-i18n="live.changeLabel">日内变动</span>
+                            <span class="live-change" id="spLiveChange">--</span>
+                        </div>
+                    </article>
+                    <article class="live-card" id="liveQqq">
+                        <h3 data-i18n="live.qqqTitle">纳斯达克 100 (QQQ)</h3>
+                        <div class="live-metric">
+                            <span class="live-label" data-i18n="live.valueLabel">当前指数</span>
+                            <span class="live-value" id="qqqLiveValue">--</span>
+                        </div>
+                        <div class="live-metric">
+                            <span class="live-label" data-i18n="live.changeLabel">日内变动</span>
+                            <span class="live-change" id="qqqLiveChange">--</span>
+                        </div>
+                    </article>
                 </div>
-                <div class="signal-grid" id="athleticSignals"></div>
+                <p class="live-updated" id="liveUpdated"></p>
+                <p class="live-error" id="liveError" role="alert"></p>
             </div>
         </section>
 
