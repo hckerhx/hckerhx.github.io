@@ -60,13 +60,19 @@ body {
 }
 
 .language-switcher {
+    position: fixed;
+    top: 1.5rem;
+    right: clamp(1rem, 4vw, 2.5rem);
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
     padding: 0.3rem;
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.45);
-    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35);
+    z-index: 1000;
 }
 
 .lang-button {
@@ -354,19 +360,15 @@ tbody tr:last-child td {
         padding: 4rem 0 2.5rem;
     }
 
-    .hero-top {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
     .language-switcher {
-        align-self: flex-end;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.25rem;
     }
 
     .hero-metrics {
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     }
-
 
     .chart-card canvas {
         height: 260px;
