@@ -78,6 +78,28 @@
                 <div class="timeline" id="timeline"></div>
             </div>
         </section>
+      
+        <section class="section planner">
+            <div class="container">
+                <h2 data-i18n="investment.title">投入金额推演</h2>
+                <p class="section-intro" data-i18n="investment.intro">
+                    输入计划投入金额，系统将按照历次回撤事件给出分批买入与持有的参考方案。
+                </p>
+                <form class="planner-form" id="investmentForm">
+                    <div class="form-field">
+                        <label for="investmentAmount" data-i18n="investment.formLabel">计划投入金额 (USD)</label>
+                        <div class="form-controls">
+                            <input type="number" id="investmentAmount" name="investmentAmount" min="0" step="100" value="10000">
+                            <button type="submit" class="button" data-i18n="investment.submit">生成操作建议</button>
+                        </div>
+                        <p class="form-helper" id="investmentHelper" data-i18n="investment.helper">请输入正数金额，建议以美元为单位。</p>
+                        <p class="form-error" id="planError" role="alert"></p>
+                    </div>
+                </form>
+                <p class="planner-summary" id="planSummary"></p>
+                <div class="plan-grid" id="planResults"></div>
+            </div>
+        </section>
 
         <section class="section live">
             <div class="container">
@@ -156,6 +178,21 @@
             <div class="container">
                 <h2 data-i18n="sections.insightsTitle">策略洞察</h2>
                 <div class="insight-grid" id="insights"></div>
+            </div>
+        </section>
+
+        <section class="section alt subscribe">
+            <div class="container">
+                <h2 data-i18n="subscription.title">邮件提醒订阅</h2>
+                <p class="section-intro" data-i18n="subscription.intro">
+                    留下邮箱，当策略再次触发深跌买入信号或组合出现显著波动时即时接收提醒。
+                </p>
+                <form class="subscribe-form" id="subscriptionForm">
+                    <label class="visually-hidden" for="subscriptionEmail" data-i18n="subscription.emailLabel">邮箱地址</label>
+                    <input type="email" id="subscriptionEmail" name="subscriptionEmail" autocomplete="email">
+                    <button type="submit" class="button" data-i18n="subscription.submit">订阅提醒</button>
+                </form>
+                <p class="form-message" id="subscriptionMessage" role="status"></p>
             </div>
         </section>
     </main>

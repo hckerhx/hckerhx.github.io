@@ -6,6 +6,8 @@ const series = {
     qqqDCA: [100, 105.0, 123.9, 146.2, 172.5, 203.5, 213.7, 252.2, 244.6, 288.6, 262.6, 309.9, 263.4, 310.8, 366.7]
 };
 
+const DEFAULT_INVESTMENT_AMOUNT = 10000;
+
 const strategyLabels = {
     mag7Strategy: { zh: 'Mag 7 深跌买入', en: 'Mag 7 Tactical Drawdown' },
     sp500DCA: { zh: 'S&P 500 定投', en: 'S&P 500 DCA' },
@@ -95,6 +97,29 @@ const translations = {
             updated: '数据更新：',
             error: '无法从 Yahoo Finance 获取实时数据，请稍后重试。'
         },
+        investment: {
+            title: '投入金额推演',
+            intro: '输入计划投入金额，系统将按照历次回撤事件给出分批买入与持有的参考方案。',
+            formLabel: '计划投入金额 (USD)',
+            helper: '请输入正数金额，建议以美元为单位。',
+            submit: '生成操作建议',
+            placeholder: '例如 10000',
+            summary: '总投入 {amount}，覆盖 {count} 次触发事件。',
+            dropLabel: '触发条件：{drop}',
+            stepLabel: '步骤 {index}',
+            stepAmount: '投入：{amount}（约 {percentage}%）',
+            holdLabel: '持有建议：',
+            invalid: '请输入正数金额。'
+        },
+        subscription: {
+            title: '邮件提醒订阅',
+            intro: '留下邮箱，当策略再次触发深跌买入信号或组合出现显著波动时即时接收提醒。',
+            emailLabel: '邮箱地址',
+            submit: '订阅提醒',
+            placeholder: 'you@example.com',
+            success: '已为 {email} 开通提醒，未来有新的触发事件将第一时间通知。',
+            invalid: '请输入有效的邮箱地址。'
+        },
         holdResultLabel: '持有结果：',
         footer: {
             note: '数据用于策略示意，投资需结合实际财务状况与风险承受能力。'
@@ -182,6 +207,29 @@ const translations = {
             updated: 'Last updated: ',
             error: 'Unable to reach Yahoo Finance right now. Please try again later.'
         },
+        investment: {
+            title: 'Investment Deployment Planner',
+            intro: 'Enter your capital commitment to see how each historical drawdown would stage entries and holding guidance.',
+            formLabel: 'Planned Capital (USD)',
+            helper: 'Use a positive number, ideally in US dollars.',
+            submit: 'Generate Action Plan',
+            placeholder: 'e.g. 10000',
+            summary: 'Total capital {amount} allocated across {count} strategy events.',
+            dropLabel: 'Trigger: {drop}',
+            stepLabel: 'Step {index}',
+            stepAmount: 'Deploy {amount} (~{percentage}%)',
+            holdLabel: 'Holding guidance:',
+            invalid: 'Enter a positive investment amount.'
+        },
+        subscription: {
+            title: 'Email Alert Subscription',
+            intro: 'Share your email to receive alerts whenever deep-drawdown signals fire or the live portfolio swings sharply.',
+            emailLabel: 'Email address',
+            submit: 'Subscribe',
+            placeholder: 'you@example.com',
+            success: 'Alerts will reach {email} the next time signals fire.',
+            invalid: 'Please provide a valid email address.'
+        },
         holdResultLabel: 'Holding outcome:',
         footer: {
             note: 'Data are illustrative; align decisions with your financial situation and risk tolerance.'
@@ -197,6 +245,35 @@ const timelineEvents = [
         context: {
             zh: '欧债危机导致全球流动性收紧，苹果、微软、亚马逊纷纷下调营收指引。',
             en: 'Eurozone stress drained liquidity and Apple, Microsoft, Amazon cut revenue guidance.'
+        },
+        plan: {
+            steps: [
+                {
+                    percentage: 0.4,
+                    description: {
+                        zh: '首周按等权买入 AAPL、MSFT、GOOGL，占用总资金40%，在恐慌情绪中快速建立核心仓位。',
+                        en: 'Deploy 40% equally into AAPL, MSFT, and GOOGL in week one to anchor the panic lows.'
+                    }
+                },
+                {
+                    percentage: 0.35,
+                    description: {
+                        zh: '第二周若波动率维持高位，再投入35%加仓同样标的，利用波动回吐摊低成本。',
+                        en: 'Add another 35% the following week while volatility stays elevated, repeating the equal-weight mix to average in.'
+                    }
+                },
+                {
+                    percentage: 0.25,
+                    description: {
+                        zh: '剩余25%放在第三周，逢回调补齐并通过卖出看跌期权获取权利金对冲波动。',
+                        en: 'Use the final 25% in week three on additional weakness and finance the entry by writing selective puts.'
+                    }
+                }
+            ],
+            hold: {
+                zh: '持有18-24个月，跟踪盈利指引恢复节奏逐步收割估值修复。',
+                en: 'Hold 18-24 months and let improving guidance drive the re-rating.'
+            }
         },
         execution: {
             zh: '等权加仓 AAPL、MSFT、GOOGL，三周内完成分批建仓并同时卖出隐含波动率。',
@@ -215,6 +292,35 @@ const timelineEvents = [
             zh: '强美元与 PC/手机换机疲软，微软与苹果的盈利预期同步下修。',
             en: 'A surging dollar and weak PC/mobile refresh cycle pulled Microsoft and Apple guidance lower.'
         },
+        plan: {
+            steps: [
+                {
+                    percentage: 0.35,
+                    description: {
+                        zh: '首月以 NVDA、MSFT、AMZN 为核心投入35%，优先锁定云计算与数据中心主线。',
+                        en: 'Commit 35% in the first month to NVDA, MSFT, and AMZN to secure cloud and data-center exposure.'
+                    }
+                },
+                {
+                    percentage: 0.3,
+                    description: {
+                        zh: '当美元指数回落或盈利指引趋稳时，再投入30%继续加仓 NVDA 与 AMZN。',
+                        en: 'Allocate another 30% once the dollar cools or guidance stabilizes, leaning into NVDA and AMZN.'
+                    }
+                },
+                {
+                    percentage: 0.35,
+                    description: {
+                        zh: '最后35%分散于 META、TSLA 等高波动标的，并保留部分现金等待财报确认。',
+                        en: 'Distribute the final 35% across META and TSLA while keeping a cash buffer until earnings confirm the turn.'
+                    }
+                }
+            ],
+            hold: {
+                zh: '至少持有24个月，关注云支出与数据中心扩张的兑现节奏。',
+                en: 'Hold roughly two years while cloud and data-center capex accelerates.'
+            }
+        },
         execution: {
             zh: '在财报空窗期内逐步买入 NVDA、MSFT、AMZN，同时将 META、TSLA 控制在较低权重。',
             en: 'Accumulated NVDA, MSFT, and AMZN through the earnings quiet period while keeping META and TSLA lighter.'
@@ -231,6 +337,35 @@ const timelineEvents = [
         context: {
             zh: '美联储持续加息与贸易摩擦叠加，成长股估值被系统性压缩。',
             en: 'Aggressive Fed hikes and trade disputes compressed growth valuations across the board.'
+        },
+        plan: {
+            steps: [
+                {
+                    percentage: 0.3,
+                    description: {
+                        zh: '第一周投入30%，全面覆盖 Mag 7，建立基准仓位对冲继续下行风险。',
+                        en: 'Deploy 30% across the full Mag 7 basket in week one to set the core hedge against further downside.'
+                    }
+                },
+                {
+                    percentage: 0.4,
+                    description: {
+                        zh: '随后两周按“三批法”再投入40%，通过分批抬高均价平滑波动。',
+                        en: 'Add 40% over the next two weeks with a three-tranche schedule to smooth volatility.'
+                    }
+                },
+                {
+                    percentage: 0.3,
+                    description: {
+                        zh: '保留30%在期权到期前补仓，并卖出 QQQ 看跌期权获取额外权利金。',
+                        en: 'Use the remaining 30% before option expiry, topping up on dips while shorting QQQ puts for premium.'
+                    }
+                }
+            ],
+            hold: {
+                zh: '持有约24个月，每年再平衡一次，锁定相对指数 80 个百分点的优势。',
+                en: 'Hold about 24 months and rebalance annually to lock in the 80ppt spread versus the index.'
+            }
         },
         execution: {
             zh: '分三批买入所有 Mag 7 成员，并通过卖出 QQQ 看跌期权获取额外权利金。',
@@ -249,6 +384,35 @@ const timelineEvents = [
             zh: '疫情冲击需求与供应链，市场情绪极度悲观，科技龙头普遍暴跌。',
             en: 'Pandemic demand collapse and supply-chain chaos sent mega-cap tech tumbling amid panic.'
         },
+        plan: {
+            steps: [
+                {
+                    percentage: 0.3,
+                    description: {
+                        zh: '第一季度投入30%，优先配置远程办公与云业务受益股，锁定危机初期的折价。',
+                        en: 'Commit 30% in the first quarter to remote work and cloud leaders to capture the initial dislocation.'
+                    }
+                },
+                {
+                    percentage: 0.35,
+                    description: {
+                        zh: '疫情高峰期间再投入35%，扩展到电商与半导体龙头，利用高波动放大仓位。',
+                        en: 'Add 35% during peak stress, extending into e-commerce and semiconductor winners while volatility is elevated.'
+                    }
+                },
+                {
+                    percentage: 0.35,
+                    description: {
+                        zh: '剩余35%在经济重启前完成部署，逢反弹分批吸收以锁定估值修复潜力。',
+                        en: 'Deploy the remaining 35% before reopening, scaling into rebounds to secure the recovery upside.'
+                    }
+                }
+            ],
+            hold: {
+                zh: '至少持有18个月，随复工与数字化红利成熟逐步减仓。',
+                en: 'Hold at least 18 months and trim as reopening and digital tailwinds mature.'
+            }
+        },
         execution: {
             zh: '采用“3-5-7”分批法在两个季度内完成加仓，远程办公与云业务成为重点权重。',
             en: 'Deployed a 3-5-7 tranche plan across two quarters, overweighting remote work and cloud beneficiaries.'
@@ -265,6 +429,35 @@ const timelineEvents = [
         context: {
             zh: '加息与盈利增速放缓导致估值重估，但 GPU 与 AI 云支出出现领先指标。',
             en: 'Rising rates and slower earnings forced a reset while GPU and AI cloud demand flashed early signals.'
+        },
+        plan: {
+            steps: [
+                {
+                    percentage: 0.4,
+                    description: {
+                        zh: '首月集中40%资金增持 NVDA、MSFT，利用估值压缩窗口建立高确定性仓位。',
+                        en: 'Concentrate 40% in NVDA and MSFT during the first month while multiples are compressed.'
+                    }
+                },
+                {
+                    percentage: 0.3,
+                    description: {
+                        zh: '当 AI 订单与资本开支确认后，再投入30%覆盖 GPU 及云基础设施供应链。',
+                        en: 'Once AI orders and capex firm up, allocate another 30% across GPU and cloud infrastructure suppliers.'
+                    }
+                },
+                {
+                    percentage: 0.3,
+                    description: {
+                        zh: '最后30%结合备兑开仓策略缓冲 TSLA 波动，同时动态对冲高贝塔仓位。',
+                        en: 'Deploy the final 30% alongside covered calls to temper TSLA volatility and hedge high-beta exposure.'
+                    }
+                }
+            ],
+            hold: {
+                zh: '持有至 2024 年前后，随着 AI 主题扩散分批兑现利润。',
+                en: 'Hold into 2024 and stagger exits as the AI theme broadens.'
+            }
         },
         execution: {
             zh: '集中增持 NVDA、MSFT，并以备兑开仓策略管理 TSLA 波动性。',
@@ -319,7 +512,15 @@ const state = {
     signalCounts: {},
     liveData: null,
     liveError: null,
-    lastUpdated: null
+    lastUpdated: null,
+    investment: {
+        amount: DEFAULT_INVESTMENT_AMOUNT,
+        error: false
+    },
+    subscription: {
+        status: 'idle',
+        email: ''
+    }
 };
 
 const charts = {
@@ -369,6 +570,10 @@ function calcTenYearReturn(values) {
     return window[window.length - 1] / window[0] - 1;
 }
 
+function getLocale(lang) {
+    return lang === 'zh' ? 'zh-CN' : 'en-US';
+}
+
 function formatPercent(value, options = {}) {
     const { sign = false, digits = 1 } = options;
     const percentage = (value * 100).toFixed(digits);
@@ -376,6 +581,18 @@ function formatPercent(value, options = {}) {
         return `+${percentage}%`;
     }
     return `${percentage}%`;
+}
+
+function formatCurrency(value, lang) {
+    if (typeof value !== 'number' || Number.isNaN(value)) {
+        return '--';
+    }
+    return new Intl.NumberFormat(getLocale(lang), {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: value >= 1000 ? 0 : 2
+    }).format(value);
 }
 
 function formatIndexValue(value, locale) {
@@ -623,6 +840,111 @@ function renderTimeline(events, lang, labels) {
     });
 }
 
+function renderInvestmentPlanner(lang) {
+    const config = translations[lang].investment;
+    const amount = state.investment.amount;
+    const results = document.getElementById('planResults');
+    const summaryEl = document.getElementById('planSummary');
+    const errorEl = document.getElementById('planError');
+    const inputEl = document.getElementById('investmentAmount');
+    const helperEl = document.getElementById('investmentHelper');
+
+    if (inputEl) {
+        if (amount && !Number.isNaN(amount)) {
+            inputEl.value = amount;
+        } else if (!inputEl.value) {
+            inputEl.value = '';
+        }
+        inputEl.placeholder = config.placeholder;
+    }
+
+    if (helperEl) {
+        helperEl.textContent = config.helper;
+    }
+
+    if (errorEl) {
+        errorEl.textContent = state.investment.error ? config.invalid : '';
+    }
+
+    if (!results) return;
+    results.innerHTML = '';
+
+    const plannedEvents = timelineEvents.filter(event => event.plan);
+
+    if (summaryEl) {
+        if (amount && amount > 0 && !state.investment.error) {
+            summaryEl.textContent = formatTemplate(config.summary, {
+                amount: formatCurrency(amount, lang),
+                count: plannedEvents.length
+            });
+        } else {
+            summaryEl.textContent = '';
+        }
+    }
+
+    if (!amount || amount <= 0 || state.investment.error) {
+        return;
+    }
+
+    plannedEvents.forEach(event => {
+        const card = document.createElement('article');
+        card.className = 'plan-card';
+
+        const header = document.createElement('header');
+        const dateEl = document.createElement('span');
+        dateEl.className = 'plan-date';
+        dateEl.textContent = event.date;
+
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = event.title[lang];
+
+        const dropEl = document.createElement('span');
+        dropEl.className = 'plan-drop';
+        dropEl.textContent = formatTemplate(config.dropLabel, { drop: event.drop[lang] });
+
+        header.append(dateEl, titleEl, dropEl);
+
+        const stepsWrapper = document.createElement('div');
+        stepsWrapper.className = 'plan-steps';
+
+        event.plan.steps.forEach((step, index) => {
+            const stepWrapper = document.createElement('div');
+            stepWrapper.className = 'plan-step';
+
+            const stepTitle = document.createElement('div');
+            stepTitle.className = 'plan-step-title';
+            stepTitle.textContent = formatTemplate(config.stepLabel, { index: index + 1 });
+
+            const stepAmount = document.createElement('div');
+            stepAmount.className = 'plan-step-amount';
+            const percentage = step.percentage * 100;
+            const percentageText = Number.isInteger(percentage) ? percentage.toFixed(0) : percentage.toFixed(1);
+            stepAmount.textContent = formatTemplate(config.stepAmount, {
+                amount: formatCurrency(amount * step.percentage, lang),
+                percentage: percentageText
+            });
+
+            const stepDesc = document.createElement('p');
+            stepDesc.className = 'plan-step-desc';
+            stepDesc.textContent = step.description[lang];
+
+            stepWrapper.append(stepTitle, stepAmount, stepDesc);
+            stepsWrapper.appendChild(stepWrapper);
+        });
+
+        card.append(header, stepsWrapper);
+
+        if (event.plan.hold) {
+            const holdEl = document.createElement('p');
+            holdEl.className = 'plan-hold';
+            holdEl.textContent = `${config.holdLabel} ${event.plan.hold[lang]}`;
+            card.appendChild(holdEl);
+        }
+
+        results.appendChild(card);
+    });
+}
+
 function renderInsights(data, lang) {
     const wrapper = document.getElementById('insights');
     wrapper.innerHTML = '';
@@ -639,6 +961,28 @@ function renderInsights(data, lang) {
         card.append(title, detail);
         wrapper.appendChild(card);
     });
+}
+
+function renderSubscription(lang) {
+    const config = translations[lang].subscription;
+    const input = document.getElementById('subscriptionEmail');
+    const message = document.getElementById('subscriptionMessage');
+
+    if (input) {
+        input.placeholder = config.placeholder;
+    }
+
+    if (!message) return;
+
+    message.textContent = '';
+    message.classList.remove('error');
+
+    if (state.subscription.status === 'success') {
+        message.textContent = formatTemplate(config.success, { email: state.subscription.email });
+    } else if (state.subscription.status === 'error') {
+        message.textContent = config.invalid;
+        message.classList.add('error');
+    }
 }
 
 function buildLineChart(ctx, datasets, options = {}) {
@@ -763,6 +1107,22 @@ function getTranslation(lang, path) {
     return path.split('.').reduce((acc, key) => (acc !== undefined ? acc[key] : undefined), translations[lang]);
 }
 
+function formatTemplate(template, params = {}) {
+    if (typeof template !== 'string') return '';
+    return template.replace(/\{(\w+)\}/g, (match, key) => {
+        const value = params[key];
+        return value !== undefined ? value : '';
+    });
+}
+
+function isValidEmail(value) {
+    if (typeof value !== 'string') return false;
+    const trimmed = value.trim();
+    if (!trimmed) return false;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(trimmed);
+}
+
 function translateStatic(lang) {
     const elements = document.querySelectorAll('[data-i18n]');
     elements.forEach(element => {
@@ -867,6 +1227,8 @@ function setLanguage(lang) {
     renderTable(lang);
     updateAriaLabels(lang);
     renderLiveSection(lang);
+    renderInvestmentPlanner(lang);
+    renderSubscription(lang);
 }
 
 function setupLanguageSwitcher() {
@@ -877,6 +1239,68 @@ function setupLanguageSwitcher() {
                 setLanguage(lang);
             }
         });
+    });
+}
+
+function setupInvestmentPlanner() {
+    const form = document.getElementById('investmentForm');
+    const input = document.getElementById('investmentAmount');
+    if (!form || !input) return;
+
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        const value = Number.parseFloat(input.value);
+        if (!Number.isFinite(value) || value <= 0) {
+            state.investment.amount = 0;
+            state.investment.error = true;
+        } else {
+            state.investment.amount = value;
+            state.investment.error = false;
+        }
+        renderInvestmentPlanner(currentLanguage);
+    });
+
+    input.addEventListener('input', () => {
+        const raw = input.value;
+        if (raw === '') {
+            state.investment.amount = 0;
+            state.investment.error = false;
+            renderInvestmentPlanner(currentLanguage);
+            return;
+        }
+        const value = Number.parseFloat(raw);
+        if (Number.isFinite(value) && value > 0) {
+            state.investment.amount = value;
+            state.investment.error = false;
+            renderInvestmentPlanner(currentLanguage);
+        }
+    });
+}
+
+function setupSubscriptionForm() {
+    const form = document.getElementById('subscriptionForm');
+    const input = document.getElementById('subscriptionEmail');
+    if (!form || !input) return;
+
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        const email = input.value.trim();
+        if (!isValidEmail(email)) {
+            state.subscription.status = 'error';
+            state.subscription.email = email;
+        } else {
+            state.subscription.status = 'success';
+            state.subscription.email = email;
+            input.value = '';
+        }
+        renderSubscription(currentLanguage);
+    });
+
+    input.addEventListener('input', () => {
+        if (state.subscription.status === 'error') {
+            state.subscription.status = 'idle';
+            renderSubscription(currentLanguage);
+        }
     });
 }
 
@@ -926,6 +1350,8 @@ function init() {
     };
 
     setupLanguageSwitcher();
+    setupInvestmentPlanner();
+    setupSubscriptionForm();
     setLanguage(currentLanguage);
     startLiveRefresh();
 }
