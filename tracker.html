@@ -2,120 +2,12 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>策略实验室 - 应用界面</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <meta http-equiv="refresh" content="0; url=index.html">
+    <title>跳转中…</title>
+    <link rel="canonical" href="index.html">
+    <meta name="robots" content="noindex">
 </head>
-<body class="app-page">
-    <div class="language-switcher" role="group" aria-label="语言切换">
-        <button class="lang-button active" data-lang="zh">中文</button>
-        <button class="lang-button" data-lang="en">EN</button>
-    </div>
-
-    <nav class="site-nav" aria-label="页面导航">
-        <div class="container nav-container">
-            <a class="nav-brand" id="navBrand" href="index.html">策略实验室</a>
-            <ul class="nav-links">
-                <li><a class="nav-link" id="navTheory" href="index.html">理论界面</a></li>
-                <li><a class="nav-link active" id="navApplication" href="tracker.html" aria-current="page">应用界面</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <main class="app-layout">
-        <div class="container app-container">
-            <section class="application-panel" aria-labelledby="panelTitle">
-                <header class="panel-header">
-                    <div class="panel-tabs" role="tablist">
-                        <span class="panel-tab active" role="tab" aria-selected="true" id="panelTitle">应用</span>
-                        <a class="panel-tab" role="tab" aria-selected="false" id="panelTheoryLink" href="index.html">理论</a>
-                    </div>
-                    <span class="panel-locale" id="panelLocale">中 / 英</span>
-                </header>
-
-                <div class="panel-body">
-                    <section class="ticker-board" aria-labelledby="tickerLabel">
-                        <div class="ticker-header">
-                            <label class="panel-label" id="tickerLabel" for="newTickerInput">股票代码：</label>
-                            <button type="button" class="icon-button" id="addTicker" aria-label="添加股票">＋</button>
-                        </div>
-                        <div class="ticker-list" id="tickerList"></div>
-                        <p class="panel-helper" id="tickerExample">例如：AAPL、MSFT、0700.HK</p>
-                    </section>
-
-                    <aside class="panel-controls" aria-label="监控参数">
-                        <div class="control-block">
-                            <h3 class="control-title" id="observationTitle">观测时间</h3>
-                            <div class="control-field">
-                                <input type="number" id="observationMonths" min="1" max="12" value="2" aria-describedby="observationHelper">
-                                <span class="control-unit" id="observationUnit">个月</span>
-                            </div>
-                            <p class="control-helper" id="observationHelper">默认 2 个月</p>
-                        </div>
-                        <div class="control-block">
-                            <h3 class="control-title" id="thresholdTitle">幅度控制</h3>
-                            <div class="control-field">
-                                <input type="number" id="dropThreshold" min="5" max="80" step="1" value="20" aria-describedby="thresholdHelper">
-                                <span class="control-unit">%</span>
-                            </div>
-                            <p class="control-helper" id="thresholdHelper">默认 20%</p>
-                        </div>
-                    </aside>
-                </div>
-
-                <footer class="panel-footer">
-                    <div class="email-field">
-                        <label for="alertEmail" id="emailLabel">邮箱</label>
-                        <input type="email" id="alertEmail" placeholder="you@example.com">
-                    </div>
-                    <div class="panel-actions">
-                        <button type="button" class="button secondary" id="savePreferences">保存设置</button>
-                        <button type="button" class="button" id="refreshAll">刷新全部</button>
-                    </div>
-                </footer>
-
-                <details class="advanced-settings" id="advancedSettings">
-                    <summary id="advancedSummary">数据源与邮件服务配置</summary>
-                    <div class="settings-grid">
-                        <div class="form-field">
-                            <label for="apiKey" id="apiKeyLabel">Alpha Vantage API Key</label>
-                            <input type="password" id="apiKey" autocomplete="off" placeholder="例如 demo">
-                            <p class="form-helper" id="apiKeyHelper">密钥仅存储在浏览器本地。</p>
-                        </div>
-                        <div class="form-field">
-                            <label for="serviceId" id="serviceIdLabel">EmailJS Service ID</label>
-                            <input type="text" id="serviceId" autocomplete="off">
-                        </div>
-                        <div class="form-field">
-                            <label for="templateId" id="templateIdLabel">EmailJS Template ID</label>
-                            <input type="text" id="templateId" autocomplete="off">
-                        </div>
-                        <div class="form-field">
-                            <label for="publicKey" id="publicKeyLabel">EmailJS Public Key</label>
-                            <input type="text" id="publicKey" autocomplete="off">
-                        </div>
-                    </div>
-                </details>
-            </section>
-
-            <section class="status-section" aria-live="polite">
-                <div class="status-banner" id="statusBanner" role="status"></div>
-                <p class="status-updated" id="lastUpdated"></p>
-                <div class="results-container" id="resultsContainer">
-                    <div class="empty-state" id="emptyState">请先添加股票代码。</div>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <p id="footerNote">示例项目仅用于策略演示，不构成投资建议。</p>
-        </div>
-    </footer>
-
-    <script src="js/tracker.js" type="module"></script>
+<body>
+    <p>页面已迁移至 <a href="index.html">下跌监控</a>，若浏览器未自动跳转，请点击链接。</p>
 </body>
 </html>
