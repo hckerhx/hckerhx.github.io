@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>头部公司深跌买入策略实验室</title>
+    <title>策略实验室 - 下跌监控</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 </head>
-<body>
+<body class="app-page">
     <div class="language-switcher" role="group" aria-label="语言切换">
         <button class="lang-button active" data-lang="zh">中文</button>
         <button class="lang-button" data-lang="en">EN</button>
@@ -16,203 +16,100 @@
 
     <nav class="site-nav" aria-label="页面导航">
         <div class="container nav-container">
-            <a class="nav-brand" href="index.html" data-i18n="nav.brand">策略实验室</a>
-            <ul class="nav-links">
-                <li><a class="nav-link active" href="index.html" aria-current="page" data-i18n="nav.theory">理论界面</a></li>
-                <li><a class="nav-link" href="tracker.html" data-i18n="nav.tracker">应用界面</a></li>
-            </ul>
+            <div class="nav-buttons" role="navigation" aria-label="主要页面">
+                <a class="nav-link active" id="navMonitor" href="index.html" aria-current="page">下跌监控</a>
+                <a class="nav-link" id="navTheory" href="theory.html">策略理论</a>
+            </div>
         </div>
     </nav>
 
-    <header class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-top">
-                    <div class="hero-label" data-i18n="hero.label">策略可视化平台</div>
-                </div>
-                <h1 data-i18n="hero.title">头部公司深跌买入策略实验室</h1>
-                <p class="hero-subtitle" data-i18n="hero.subtitle">
-                    当Mag 7 科技龙头因宏观或财报事件急跌超过20%时逆向加仓，持有2-3年，
-                    并与长期定投 S&amp;P 500 与 QQQ 的表现进行对比，同时跟踪实时组合净值。
-                </p>
-                <div class="hero-metrics" id="heroMetrics"></div>
-            </div>
-        </div>
-    </header>
-
-    <main>
-        <section class="section">
-            <div class="container">
-                <div class="section-grid">
-                    <article class="card">
-                        <h2 data-i18n="sections.assumptionsTitle">策略核心假设</h2>
-                        <ul class="list">
-                            <li data-i18n="sections.assumptionsItems.0">聚焦具备稳定盈利和技术护城河的头部公司。</li>
-                            <li data-i18n="sections.assumptionsItems.1">当股价在一个季度内回撤超过20%时触发“深跌买入”。</li>
-                            <li data-i18n="sections.assumptionsItems.2">分批买入后持有2-3年，等待业绩与估值修复。</li>
-                            <li data-i18n="sections.assumptionsItems.3">持仓收益与 S&amp;P 500、QQQ 定投结果进行长期对照。</li>
-                        </ul>
-                    </article>
-                    <article class="card">
-                        <h2 data-i18n="sections.methodologyTitle">数据与方法</h2>
-                        <p data-i18n="sections.methodologyBody">
-                            历史回测区间覆盖2010-2024年。为突出策略的节奏与风险，我们将关键事件时间线、
-                            组合净值走势与核心指标一并呈现。定投参考组合假设每年等额投入并按年度再平衡，
-                            数据经过平滑处理以便突出相对趋势。
-                        </p>
-                        <div class="tag" data-i18n="sections.methodologyTag">结果以100为初始净值，数值为示意回测。</div>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <div class="container">
-                <h2 data-i18n="sections.mag7Title">Mag 7 策略 vs. 指数定投</h2>
-                <p class="section-intro" data-i18n="sections.mag7Intro">
-                    深跌买入策略在科技龙头上的表现显示出极强的反弹弹性，尤其在2020年疫情与2022年估值纠偏后，
-                    净值恢复速度明显快于被动定投组合。
-                </p>
-                <div class="chart-card">
-                    <canvas id="mag7Chart" aria-label="Mag 7 策略与指数定投对比折线图" role="img"></canvas>
-                </div>
-            </div>
-        </section>
-
-        <section class="section alt">
-            <div class="container">
-                <h2 data-i18n="sections.timelineTitle">Mag 7 策略操作时间线</h2>
-                <p class="section-intro" data-i18n="sections.timelineIntro">
-                    追踪每次深跌买入的触发背景、加仓节奏与持有结果，理解策略在不同宏观周期下的执行细节。
-                </p>
-                <div class="timeline" id="timeline"></div>
-            </div>
-        </section>
-      
-        <section class="section planner">
-            <div class="container">
-                <h2 data-i18n="investment.title">投入金额推演</h2>
-                <p class="section-intro" data-i18n="investment.intro">
-                    输入计划投入金额，系统将按照历次回撤事件给出分批买入与持有的参考方案。
-                </p>
-                <form class="planner-form" id="investmentForm">
-                    <div class="form-field">
-                        <label for="investmentAmount" data-i18n="investment.formLabel">计划投入金额 (USD)</label>
-                        <div class="form-controls">
-                            <input type="number" id="investmentAmount" name="investmentAmount" min="0" step="100" value="10000">
-                            <button type="submit" class="button" data-i18n="investment.submit">生成操作建议</button>
-                        </div>
-                        <p class="form-helper" id="investmentHelper" data-i18n="investment.helper">请输入正数金额，建议以美元为单位。</p>
-                        <p class="form-error" id="planError" role="alert"></p>
+    <main class="app-layout">
+        <div class="container app-container">
+            <section class="application-panel" aria-labelledby="panelTitle">
+                <header class="panel-header">
+                    <div class="panel-tabs" role="tablist">
+                        <span class="panel-tab active" role="tab" aria-selected="true" id="panelTitle">下跌监控</span>
+                        <a class="panel-tab" role="tab" aria-selected="false" id="panelTheoryLink" href="theory.html">策略理论</a>
                     </div>
-                </form>
-                <p class="planner-summary" id="planSummary"></p>
-                <div class="plan-grid" id="planResults"></div>
-            </div>
-        </section>
+                    <span class="panel-locale" id="panelLocale">中 / 英</span>
+                </header>
 
-        <section class="section live">
-            <div class="container">
-                <h2 data-i18n="sections.liveTitle">实时组合净值对比</h2>
-                <p class="section-intro" data-i18n="sections.liveIntro">
-                    通过接入 Yahoo Finance API，等权跟踪 Mag 7 组合，并与 SPY、QQQ 的日内表现进行实时比较。
-                </p>
-                <div class="live-grid">
-                    <article class="live-card" id="liveMag7">
-                        <h3 data-i18n="live.mag7Title">Mag 7 等权组合</h3>
-                        <div class="live-metric">
-                            <span class="live-label" data-i18n="live.valueLabel">当前指数</span>
-                            <span class="live-value" id="mag7LiveValue">--</span>
+                <div class="panel-body">
+                    <section class="ticker-board" aria-labelledby="tickerLabel">
+                        <div class="ticker-header">
+                            <label class="panel-label" id="tickerLabel" for="newTickerInput">股票代码：</label>
+                            <button type="button" class="icon-button" id="addTicker" aria-label="添加股票">＋</button>
                         </div>
-                        <div class="live-metric">
-                            <span class="live-label" data-i18n="live.changeLabel">日内变动</span>
-                            <span class="live-change" id="mag7LiveChange">--</span>
+                        <div class="ticker-list" id="tickerList"></div>
+                        <p class="panel-helper" id="tickerExample">例如：AAPL、MSFT、0700.HK</p>
+                    </section>
+
+                    <aside class="panel-controls" aria-label="监控参数">
+                        <div class="control-block">
+                            <h3 class="control-title" id="observationTitle">观测时间</h3>
+                            <div class="control-field">
+                                <input type="number" id="observationMonths" min="1" max="12" value="2" aria-describedby="observationHelper">
+                                <span class="control-unit" id="observationUnit">个月</span>
+                            </div>
+                            <p class="control-helper" id="observationHelper">默认 2 个月</p>
                         </div>
-                    </article>
-                    <article class="live-card" id="liveSp500">
-                        <h3 data-i18n="live.spTitle">S&amp;P 500 (SPY)</h3>
-                        <div class="live-metric">
-                            <span class="live-label" data-i18n="live.valueLabel">当前指数</span>
-                            <span class="live-value" id="spLiveValue">--</span>
+                        <div class="control-block">
+                            <h3 class="control-title" id="thresholdTitle">幅度控制</h3>
+                            <div class="control-field">
+                                <input type="number" id="dropThreshold" min="5" max="80" step="1" value="20" aria-describedby="thresholdHelper">
+                                <span class="control-unit">%</span>
+                            </div>
+                            <p class="control-helper" id="thresholdHelper">默认 20%</p>
                         </div>
-                        <div class="live-metric">
-                            <span class="live-label" data-i18n="live.changeLabel">日内变动</span>
-                            <span class="live-change" id="spLiveChange">--</span>
-                        </div>
-                    </article>
-                    <article class="live-card" id="liveQqq">
-                        <h3 data-i18n="live.qqqTitle">纳斯达克 100 (QQQ)</h3>
-                        <div class="live-metric">
-                            <span class="live-label" data-i18n="live.valueLabel">当前指数</span>
-                            <span class="live-value" id="qqqLiveValue">--</span>
-                        </div>
-                        <div class="live-metric">
-                            <span class="live-label" data-i18n="live.changeLabel">日内变动</span>
-                            <span class="live-change" id="qqqLiveChange">--</span>
-                        </div>
-                    </article>
+                    </aside>
                 </div>
-                <p class="live-updated" id="liveUpdated"></p>
-                <p class="live-error" id="liveError" role="alert"></p>
-            </div>
-        </section>
 
-        <section class="section">
-            <div class="container">
-                <h2 data-i18n="sections.metricsTitle">核心指标对比</h2>
-                <p class="section-intro" data-i18n="sections.metricsIntro">
-                    通过CAGR、最大回撤与收益稳定性，观察策略在不同资产池的风险收益特征，
-                    并与被动定投方案形成直观对照。
-                </p>
-                <div class="chart-card">
-                    <canvas id="metricsChart" aria-label="策略核心指标柱状图" role="img"></canvas>
+                <footer class="panel-footer">
+                    <div class="email-field">
+                        <label for="alertEmail" id="emailLabel">邮箱</label>
+                        <input type="email" id="alertEmail" placeholder="you@example.com">
+                    </div>
+                    <div class="panel-actions">
+                        <button type="button" class="button secondary" id="savePreferences">保存设置</button>
+                        <button type="button" class="button" id="refreshAll">刷新全部</button>
+                    </div>
+                </footer>
+
+                <details class="advanced-settings" id="advancedSettings">
+                    <summary id="advancedSummary">提醒服务配置</summary>
+                    <div class="settings-grid">
+                        <div class="form-field">
+                            <label for="serviceId" id="serviceIdLabel">EmailJS Service ID</label>
+                            <input type="text" id="serviceId" autocomplete="off">
+                        </div>
+                        <div class="form-field">
+                            <label for="templateId" id="templateIdLabel">EmailJS Template ID</label>
+                            <input type="text" id="templateId" autocomplete="off">
+                        </div>
+                        <div class="form-field">
+                            <label for="publicKey" id="publicKeyLabel">EmailJS Public Key</label>
+                            <input type="text" id="publicKey" autocomplete="off">
+                        </div>
+                    </div>
+                </details>
+            </section>
+
+            <section class="status-section" aria-live="polite">
+                <div class="status-banner" id="statusBanner" role="status"></div>
+                <p class="status-updated" id="lastUpdated"></p>
+                <div class="results-container" id="resultsContainer">
+                    <div class="empty-state" id="emptyState">请先添加股票代码。</div>
                 </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-i18n="table.headers.strategy">策略</th>
-                                <th data-i18n="table.headers.cagr">CAGR</th>
-                                <th data-i18n="table.headers.maxDrawdown">最大回撤</th>
-                                <th data-i18n="table.headers.tenYear">十年总收益</th>
-                                <th data-i18n="table.headers.triggers">触发次数</th>
-                            </tr>
-                        </thead>
-                        <tbody id="metricsTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section class="section insights">
-            <div class="container">
-                <h2 data-i18n="sections.insightsTitle">策略洞察</h2>
-                <div class="insight-grid" id="insights"></div>
-            </div>
-        </section>
-
-        <section class="section alt subscribe">
-            <div class="container">
-                <h2 data-i18n="subscription.title">邮件提醒订阅</h2>
-                <p class="section-intro" data-i18n="subscription.intro">
-                    留下邮箱，当策略再次触发深跌买入信号或组合出现显著波动时即时接收提醒。
-                </p>
-                <form class="subscribe-form" id="subscriptionForm">
-                    <label class="visually-hidden" for="subscriptionEmail" data-i18n="subscription.emailLabel">邮箱地址</label>
-                    <input type="email" id="subscriptionEmail" name="subscriptionEmail" autocomplete="email">
-                    <button type="submit" class="button" data-i18n="subscription.submit">订阅提醒</button>
-                </form>
-                <p class="form-message" id="subscriptionMessage" role="status"></p>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p data-i18n="footer.note">数据用于策略示意，投资需结合实际财务状况与风险承受能力。</p>
+            <p id="footerNote">示例项目仅用于策略演示，不构成投资建议。</p>
         </div>
     </footer>
 
-    <script src="js/app.js"></script>
+    <script src="js/tracker.js" type="module"></script>
 </body>
 </html>

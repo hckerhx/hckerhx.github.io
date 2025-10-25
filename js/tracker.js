@@ -10,17 +10,16 @@ const DEFAULT_DROP_THRESHOLD = 20;
 const translations = {
     zh: {
         htmlLang: 'zh-CN',
-        documentTitle: '策略实验室 - 应用界面',
+        documentTitle: '策略实验室 - 下跌监控',
         languageSwitcherAria: '语言切换',
         nav: {
             aria: '页面导航',
-            brand: '策略实验室',
-            theory: '理论界面',
-            application: '应用界面'
+            monitor: '下跌监控',
+            theory: '策略理论'
         },
         panel: {
-            title: '应用',
-            theory: '理论',
+            title: '下跌监控',
+            theory: '策略理论',
             locale: '中 / 英'
         },
         ticker: {
@@ -47,13 +46,10 @@ const translations = {
             remove: '移除'
         },
         advanced: {
-            summary: '数据源与邮件服务配置',
-            apiKeyLabel: 'Alpha Vantage API Key',
-            apiKeyHelper: '密钥仅存储在浏览器本地。',
+            summary: '提醒服务配置',
             serviceIdLabel: 'EmailJS Service ID',
             templateIdLabel: 'EmailJS Template ID',
-            publicKeyLabel: 'EmailJS Public Key',
-            apiKeyPlaceholder: '例如 demo'
+            publicKeyLabel: 'EmailJS Public Key'
         },
         status: {
             saved: '已保存设置。',
@@ -64,8 +60,8 @@ const translations = {
             removed: symbol => `已移除 ${symbol}`,
             duplicate: symbol => `${symbol} 已在监控列表中。`,
             invalidSymbol: '请输入有效的股票代码。',
-            missingApiKey: '请先填写 Alpha Vantage API Key。',
-            rateLimit: '触发 API 频率限制，请稍后再试。',
+            notFound: '未从 Yahoo Finance 找到该股票。',
+            noData: '暂未获取到该股票的历史价格。',
             networkError: '网络请求失败，请检查网络连接。',
             unknownError: '获取数据时出现问题，请稍后重试。',
             emailSent: email => `已向 ${email} 发送深跌提醒。`,
@@ -88,17 +84,16 @@ const translations = {
     },
     en: {
         htmlLang: 'en',
-        documentTitle: 'Strategy Lab - Application',
+        documentTitle: 'Strategy Lab - Drawdown Monitor',
         languageSwitcherAria: 'Language toggle',
         nav: {
             aria: 'Site navigation',
-            brand: 'Strategy Lab',
-            theory: 'Theory',
-            application: 'Application'
+            monitor: 'Drawdown Monitor',
+            theory: 'Strategy Theory'
         },
         panel: {
-            title: 'Application',
-            theory: 'Theory',
+            title: 'Drawdown Monitor',
+            theory: 'Strategy Theory',
             locale: 'CN / EN'
         },
         ticker: {
@@ -125,13 +120,10 @@ const translations = {
             remove: 'Remove'
         },
         advanced: {
-            summary: 'Data source & Email service',
-            apiKeyLabel: 'Alpha Vantage API Key',
-            apiKeyHelper: 'Stored locally in this browser only.',
+            summary: 'Alert & Email setup',
             serviceIdLabel: 'EmailJS Service ID',
             templateIdLabel: 'EmailJS Template ID',
-            publicKeyLabel: 'EmailJS Public Key',
-            apiKeyPlaceholder: 'e.g. demo'
+            publicKeyLabel: 'EmailJS Public Key'
         },
         status: {
             saved: 'Preferences saved.',
@@ -142,8 +134,8 @@ const translations = {
             removed: symbol => `${symbol} removed`,
             duplicate: symbol => `${symbol} is already being monitored.`,
             invalidSymbol: 'Please enter a valid ticker.',
-            missingApiKey: 'Please provide your Alpha Vantage API key first.',
-            rateLimit: 'API rate limit reached. Please try again later.',
+            notFound: 'Ticker not found on Yahoo Finance.',
+            noData: 'No recent price history is available for this ticker.',
             networkError: 'Network error. Please retry in a moment.',
             unknownError: 'Something went wrong while fetching data. Please retry later.',
             emailSent: email => `Alert email sent to ${email}.`,
@@ -167,9 +159,8 @@ const translations = {
 };
 
 const languageButtons = document.querySelectorAll('.lang-button');
-const navBrand = document.getElementById('navBrand');
+const navMonitor = document.getElementById('navMonitor');
 const navTheory = document.getElementById('navTheory');
-const navApplication = document.getElementById('navApplication');
 const panelTitle = document.getElementById('panelTitle');
 const panelTheoryLink = document.getElementById('panelTheoryLink');
 const panelLocale = document.getElementById('panelLocale');
@@ -187,9 +178,6 @@ const lastUpdated = document.getElementById('lastUpdated');
 const resultsContainer = document.getElementById('resultsContainer');
 const emptyState = document.getElementById('emptyState');
 const advancedSummary = document.getElementById('advancedSummary');
-const apiKeyLabel = document.getElementById('apiKeyLabel');
-const apiKeyInput = document.getElementById('apiKey');
-const apiKeyHelper = document.getElementById('apiKeyHelper');
 const serviceIdLabel = document.getElementById('serviceIdLabel');
 const serviceIdInput = document.getElementById('serviceId');
 const templateIdLabel = document.getElementById('templateIdLabel');
@@ -230,7 +218,6 @@ function loadSettings() {
         const raw = window.localStorage.getItem(SETTINGS_KEY);
         if (!raw) {
             return {
-                apiKey: '',
                 observationMonths: DEFAULT_OBSERVATION_MONTHS,
                 dropThreshold: DEFAULT_DROP_THRESHOLD,
                 email: { serviceId: '', templateId: '', publicKey: '', toEmail: '' }
@@ -238,7 +225,6 @@ function loadSettings() {
         }
         const parsed = JSON.parse(raw);
         return {
-            apiKey: parsed.apiKey || '',
             observationMonths: Number.isFinite(parsed.observationMonths) ? parsed.observationMonths : DEFAULT_OBSERVATION_MONTHS,
             dropThreshold: Number.isFinite(parsed.dropThreshold) ? parsed.dropThreshold : DEFAULT_DROP_THRESHOLD,
             email: {
@@ -251,7 +237,6 @@ function loadSettings() {
     } catch (error) {
         console.warn('无法解析存储的设置，已重置。', error);
         return {
-            apiKey: '',
             observationMonths: DEFAULT_OBSERVATION_MONTHS,
             dropThreshold: DEFAULT_DROP_THRESHOLD,
             email: { serviceId: '', templateId: '', publicKey: '', toEmail: '' }
@@ -318,7 +303,6 @@ function initEventListeners() {
     observationInput.addEventListener('change', handleObservationChange);
     thresholdInput.addEventListener('change', handleThresholdChange);
     emailInput.addEventListener('change', handleEmailChange);
-    apiKeyInput.addEventListener('change', handleApiKeyChange);
     serviceIdInput.addEventListener('change', handleServiceIdChange);
     templateIdInput.addEventListener('change', handleTemplateIdChange);
     publicKeyInput.addEventListener('change', handlePublicKeyChange);
@@ -349,9 +333,12 @@ function applyLanguage(lang) {
         siteNav.setAttribute('aria-label', t.nav.aria);
     }
 
-    navBrand.textContent = t.nav.brand;
-    navTheory.textContent = t.nav.theory;
-    navApplication.textContent = t.nav.application;
+    if (navMonitor) {
+        navMonitor.textContent = t.nav.monitor;
+    }
+    if (navTheory) {
+        navTheory.textContent = t.nav.theory;
+    }
     panelTitle.textContent = t.panel.title;
     panelTheoryLink.textContent = t.panel.theory;
     panelLocale.textContent = t.panel.locale;
@@ -372,9 +359,6 @@ function applyLanguage(lang) {
     savePreferencesButton.textContent = t.buttons.save;
     refreshAllButton.textContent = t.buttons.refreshAll;
     advancedSummary.textContent = t.advanced.summary;
-    apiKeyLabel.textContent = t.advanced.apiKeyLabel;
-    apiKeyInput.placeholder = t.advanced.apiKeyPlaceholder;
-    apiKeyHelper.textContent = t.advanced.apiKeyHelper;
     serviceIdLabel.textContent = t.advanced.serviceIdLabel;
     templateIdLabel.textContent = t.advanced.templateIdLabel;
     publicKeyLabel.textContent = t.advanced.publicKeyLabel;
@@ -392,7 +376,6 @@ function renderSettings() {
     observationInput.value = settings.observationMonths;
     thresholdInput.value = settings.dropThreshold;
     emailInput.value = settings.email.toEmail;
-    apiKeyInput.value = settings.apiKey;
     serviceIdInput.value = settings.email.serviceId;
     templateIdInput.value = settings.email.templateId;
     publicKeyInput.value = settings.email.publicKey;
@@ -640,7 +623,6 @@ function updateSettingsFromInputs() {
     handleObservationChange();
     handleThresholdChange();
     handleEmailChange();
-    handleApiKeyChange();
     handleServiceIdChange();
     handleTemplateIdChange();
     handlePublicKeyChange();
@@ -671,11 +653,6 @@ function handleThresholdChange() {
 
 function handleEmailChange() {
     settings.email.toEmail = emailInput.value.trim();
-    saveSettings();
-}
-
-function handleApiKeyChange() {
-    settings.apiKey = apiKeyInput.value.trim();
     saveSettings();
 }
 
@@ -766,15 +743,21 @@ async function updateTicker(symbol, { silent = false } = {}) {
 }
 
 async function fetchTicker(symbol) {
-    if (!settings.apiKey) {
-        const error = new Error('MISSING_API_KEY');
-        throw error;
-    }
+    const months = Number.isFinite(settings.observationMonths) ? settings.observationMonths : DEFAULT_OBSERVATION_MONTHS;
+    const fetchMonths = Math.max(months * 2, 6);
+    const periodEnd = new Date();
+    const periodStart = new Date();
+    periodStart.setMonth(periodStart.getMonth() - fetchMonths);
 
-    const url = new URL('https://www.alphavantage.co/query');
-    url.searchParams.set('function', 'TIME_SERIES_DAILY_ADJUSTED');
-    url.searchParams.set('symbol', symbol);
-    url.searchParams.set('apikey', settings.apiKey);
+    const period1 = Math.floor(periodStart.getTime() / 1000);
+    const period2 = Math.floor(periodEnd.getTime() / 1000);
+
+    const url = new URL(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}`);
+    url.searchParams.set('period1', period1.toString());
+    url.searchParams.set('period2', period2.toString());
+    url.searchParams.set('interval', '1d');
+    url.searchParams.set('includePrePost', 'false');
+    url.searchParams.set('events', 'div,splits');
 
     const response = await fetch(url.toString());
     if (!response.ok) {
@@ -782,26 +765,28 @@ async function fetchTicker(symbol) {
     }
 
     const data = await response.json();
+    const result = data?.chart?.result?.[0];
+    const errorInfo = data?.chart?.error;
 
-    if (data.Note) {
-        const error = new Error('RATE_LIMIT');
-        error.detail = data.Note;
-        throw error;
-    }
-
-    if (data['Error Message']) {
-        throw new Error('INVALID_SYMBOL');
-    }
-
-    const series = data['Time Series (Daily)'];
-    if (!series) {
+    if (!result) {
+        if (errorInfo) {
+            const code = String(errorInfo.code || '').toLowerCase();
+            const description = String(errorInfo.description || '').toLowerCase();
+            if (code.includes('not found') || description.includes('not found') || description.includes('delisted')) {
+                throw new Error('INVALID_SYMBOL');
+            }
+            throw new Error('NO_DATA');
+        }
         throw new Error('NO_DATA');
     }
 
-    const entries = Object.entries(series)
-        .map(([date, values]) => ({
-            date: new Date(`${date}T00:00:00Z`),
-            close: Number.parseFloat(values['5. adjusted close'])
+    const timestamps = Array.isArray(result.timestamp) ? result.timestamp : [];
+    const closes = result.indicators?.quote?.[0]?.close || [];
+
+    const entries = timestamps
+        .map((ts, index) => ({
+            date: new Date(ts * 1000),
+            close: Number.parseFloat(closes[index])
         }))
         .filter(entry => Number.isFinite(entry.close))
         .sort((a, b) => b.date - a.date);
@@ -810,7 +795,6 @@ async function fetchTicker(symbol) {
         throw new Error('NO_DATA');
     }
 
-    const months = Number.isFinite(settings.observationMonths) ? settings.observationMonths : DEFAULT_OBSERVATION_MONTHS;
     const cutoff = new Date();
     cutoff.setMonth(cutoff.getMonth() - months);
 
@@ -818,6 +802,10 @@ async function fetchTicker(symbol) {
     if (!windowEntries.length) {
         const fallbackCount = Math.max(60, Math.round(months * 30));
         windowEntries = entries.slice(0, fallbackCount);
+    }
+
+    if (!windowEntries.length) {
+        throw new Error('NO_DATA');
     }
 
     const latestEntry = windowEntries[0];
@@ -900,18 +888,13 @@ function handleTickerError(error, symbol, row) {
     console.error(error);
     const t = translations[currentLang];
     switch (error?.message) {
-        case 'MISSING_API_KEY':
-            showStatus(t.status.missingApiKey, 'error');
-            break;
-        case 'RATE_LIMIT':
-            showStatus(t.status.rateLimit, 'warning');
-            break;
         case 'INVALID_SYMBOL':
-            showStatus(t.status.invalidSymbol, 'error');
+        case 'NOT_FOUND':
+            showStatus(t.status.notFound, 'error');
             if (row) row.classList.add('error');
             break;
         case 'NO_DATA':
-            showStatus(t.status.unknownError, 'error');
+            showStatus(t.status.noData, 'warning');
             if (row) row.classList.add('error');
             break;
         case 'NETWORK_ERROR':
