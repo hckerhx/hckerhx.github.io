@@ -19,6 +19,12 @@ const translations = {
         htmlLang: 'zh-CN',
         documentTitle: '头部公司深跌买入策略实验室',
         languageSwitcherAria: '语言切换',
+        nav: {
+            aria: '页面导航',
+            brand: '策略实验室',
+            theory: '策略理论',
+            tracker: '下跌监控'
+        },
         hero: {
             label: '策略可视化平台',
             title: '头部公司深跌买入策略实验室',
@@ -129,6 +135,12 @@ const translations = {
         htmlLang: 'en',
         documentTitle: 'Tactical Drawdown Strategy Lab for Market Leaders',
         languageSwitcherAria: 'Language toggle',
+        nav: {
+            aria: 'Site navigation',
+            brand: 'Strategy Lab',
+            theory: 'Strategy Research',
+            tracker: 'Drawdown Monitor'
+        },
         hero: {
             label: 'Strategy Visualization Lab',
             title: 'Tactical Drawdown Strategy Lab for Market Leaders',
@@ -1207,6 +1219,10 @@ function updateAriaLabels(lang) {
     const switcher = document.querySelector('.language-switcher');
     if (switcher) {
         switcher.setAttribute('aria-label', translations[lang].languageSwitcherAria);
+    }
+    const nav = document.querySelector('.site-nav');
+    if (nav) {
+        nav.setAttribute('aria-label', translations[lang].nav.aria);
     }
 }
 
