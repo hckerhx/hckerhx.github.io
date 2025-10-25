@@ -3,138 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>策略实验室 - 下跌监控</title>
+    <title>策略实验室 - 应用界面</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 </head>
-<body>
+<body class="app-page">
+    <div class="language-switcher" role="group" aria-label="语言切换">
+        <button class="lang-button active" data-lang="zh">中文</button>
+        <button class="lang-button" data-lang="en">EN</button>
+    </div>
+
     <nav class="site-nav" aria-label="页面导航">
         <div class="container nav-container">
-            <a class="nav-brand" href="index.html">策略实验室</a>
+            <a class="nav-brand" id="navBrand" href="index.html">策略实验室</a>
             <ul class="nav-links">
-                <li><a class="nav-link" href="index.html">策略理论</a></li>
-                <li><a class="nav-link active" href="tracker.html" aria-current="page">下跌监控</a></li>
+                <li><a class="nav-link" id="navTheory" href="index.html">理论界面</a></li>
+                <li><a class="nav-link active" id="navApplication" href="tracker.html" aria-current="page">应用界面</a></li>
             </ul>
         </div>
     </nav>
 
-    <header class="tracker-hero">
-        <div class="container">
-            <h1>两个月 20% 深跌监控</h1>
-            <p>
-                添加感兴趣的股票代码，系统会使用 Alpha Vantage 日线数据计算近两个月的最大回撤。
-                一旦最新收盘价相对期间最高点回撤超过 20%，并且配置了 EmailJS 凭证，将自动发送邮件提醒。
-            </p>
-            <div class="hero-note">邮箱提醒为可选项，若未配置则仅在页面内提示。</div>
-        </div>
-    </header>
-
-    <main class="tracker-main">
-        <section class="section">
-            <div class="container tracker-grid">
-                <article class="card tracker-card">
-                    <h2>数据源与邮件设置</h2>
-                    <p class="section-intro">
-                        Alpha Vantage 免费账号每分钟最多 5 次请求。EmailJS 可通过免费套餐完成邮件发送，
-                        请在 <a href="https://www.alphavantage.co/support/#api-key" target="_blank" rel="noopener">Alpha Vantage</a>
-                        与 <a href="https://www.emailjs.com/" target="_blank" rel="noopener">EmailJS</a> 获取所需凭证。
-                    </p>
-                    <form id="settingsForm" class="tracker-form" novalidate>
-                        <div class="form-field">
-                            <label for="apiKey">Alpha Vantage API Key</label>
-                            <input type="password" id="apiKey" name="apiKey" placeholder="例如 demo" autocomplete="off">
-                            <p class="form-helper">密钥仅保存在当前浏览器的 localStorage，不会上传至服务器。</p>
-                        </div>
-                        <fieldset class="tracker-fieldset">
-                            <legend>EmailJS 设置（可选）</legend>
-                            <div class="fieldset-grid">
-                                <div class="form-field">
-                                    <label for="serviceId">Service ID</label>
-                                    <input type="text" id="serviceId" name="serviceId" autocomplete="off">
-                                </div>
-                                <div class="form-field">
-                                    <label for="templateId">Template ID</label>
-                                    <input type="text" id="templateId" name="templateId" autocomplete="off">
-                                </div>
-                                <div class="form-field">
-                                    <label for="publicKey">Public Key</label>
-                                    <input type="text" id="publicKey" name="publicKey" autocomplete="off">
-                                </div>
-                                <div class="form-field">
-                                    <label for="toEmail">通知邮箱</label>
-                                    <input type="email" id="toEmail" name="toEmail" placeholder="you@example.com" autocomplete="off">
-                                </div>
-                            </div>
-                            <p class="form-helper">
-                                邮件模板变量可使用 <code>{{ticker}}</code>、<code>{{drop_percent}}</code>、<code>{{current_price}}</code>、
-                                <code>{{highest_price}}</code>、<code>{{highest_date}}</code> 与 <code>{{last_updated}}</code>。
-                            </p>
-                        </fieldset>
-                        <div class="form-actions">
-                            <button type="submit" class="button">保存设置</button>
-                            <button type="button" class="button secondary" id="clearSettings">清除密钥</button>
-                        </div>
-                        <p class="form-success" id="settingsMessage" role="status"></p>
-                    </form>
-                </article>
-
-                <article class="card tracker-card">
-                    <h2>追踪股票</h2>
-                    <form id="tickerForm" class="tracker-form" novalidate>
-                        <div class="form-field">
-                            <label for="tickerInput">股票代码</label>
-                            <div class="form-controls">
-                                <input type="text" id="tickerInput" name="ticker" placeholder="例如 AAPL" autocomplete="off" required>
-                                <button type="submit" class="button">添加并检查</button>
-                            </div>
-                            <p class="form-helper">使用交易所标准代码，例如美股 <code>AAPL</code>、<code>MSFT</code>，港股需带交易所后缀 <code>0700.HK</code>。</p>
-                            <p class="form-error" id="tickerError" role="alert"></p>
-                        </div>
-                    </form>
-                    <div class="tracker-actions">
-                        <button type="button" class="button secondary" id="refreshAll">刷新全部</button>
-                        <span class="tracker-updated" id="trackerUpdated"></span>
+    <main class="app-layout">
+        <div class="container app-container">
+            <section class="application-panel" aria-labelledby="panelTitle">
+                <header class="panel-header">
+                    <div class="panel-tabs" role="tablist">
+                        <span class="panel-tab active" role="tab" aria-selected="true" id="panelTitle">应用</span>
+                        <a class="panel-tab" role="tab" aria-selected="false" id="panelTheoryLink" href="index.html">理论</a>
                     </div>
-                    <div class="status-banner" id="trackerStatus" role="status" aria-live="polite"></div>
-                </article>
-            </div>
-        </section>
+                    <span class="panel-locale" id="panelLocale">中 / 英</span>
+                </header>
 
-        <section class="section alt">
-            <div class="container">
-                <h2>监控列表</h2>
-                <p class="section-intro">
-                    以下数据基于最新一次成功请求。为避免触发请求频率限制，批量刷新会串行调用 API。
-                    如果出现“Thank you for using Alpha Vantage”字样，请稍后再试。
-                </p>
-                <div class="tracker-table-wrapper">
-                    <table class="tracker-table" aria-live="polite">
-                        <thead>
-                            <tr>
-                                <th scope="col">代码</th>
-                                <th scope="col">最新收盘</th>
-                                <th scope="col">期间最高</th>
-                                <th scope="col">回撤</th>
-                                <th scope="col">更新时间</th>
-                                <th scope="col">状态</th>
-                                <th scope="col" class="visually-hidden">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tickerTableBody">
-                            <tr id="trackerEmpty">
-                                <td colspan="7">尚未添加任何股票。</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="panel-body">
+                    <section class="ticker-board" aria-labelledby="tickerLabel">
+                        <div class="ticker-header">
+                            <label class="panel-label" id="tickerLabel" for="newTickerInput">股票代码：</label>
+                            <button type="button" class="icon-button" id="addTicker" aria-label="添加股票">＋</button>
+                        </div>
+                        <div class="ticker-list" id="tickerList"></div>
+                        <p class="panel-helper" id="tickerExample">例如：AAPL、MSFT、0700.HK</p>
+                    </section>
+
+                    <aside class="panel-controls" aria-label="监控参数">
+                        <div class="control-block">
+                            <h3 class="control-title" id="observationTitle">观测时间</h3>
+                            <div class="control-field">
+                                <input type="number" id="observationMonths" min="1" max="12" value="2" aria-describedby="observationHelper">
+                                <span class="control-unit" id="observationUnit">个月</span>
+                            </div>
+                            <p class="control-helper" id="observationHelper">默认 2 个月</p>
+                        </div>
+                        <div class="control-block">
+                            <h3 class="control-title" id="thresholdTitle">幅度控制</h3>
+                            <div class="control-field">
+                                <input type="number" id="dropThreshold" min="5" max="80" step="1" value="20" aria-describedby="thresholdHelper">
+                                <span class="control-unit">%</span>
+                            </div>
+                            <p class="control-helper" id="thresholdHelper">默认 20%</p>
+                        </div>
+                    </aside>
                 </div>
-            </div>
-        </section>
+
+                <footer class="panel-footer">
+                    <div class="email-field">
+                        <label for="alertEmail" id="emailLabel">邮箱</label>
+                        <input type="email" id="alertEmail" placeholder="you@example.com">
+                    </div>
+                    <div class="panel-actions">
+                        <button type="button" class="button secondary" id="savePreferences">保存设置</button>
+                        <button type="button" class="button" id="refreshAll">刷新全部</button>
+                    </div>
+                </footer>
+
+                <details class="advanced-settings" id="advancedSettings">
+                    <summary id="advancedSummary">数据源与邮件服务配置</summary>
+                    <div class="settings-grid">
+                        <div class="form-field">
+                            <label for="apiKey" id="apiKeyLabel">Alpha Vantage API Key</label>
+                            <input type="password" id="apiKey" autocomplete="off" placeholder="例如 demo">
+                            <p class="form-helper" id="apiKeyHelper">密钥仅存储在浏览器本地。</p>
+                        </div>
+                        <div class="form-field">
+                            <label for="serviceId" id="serviceIdLabel">EmailJS Service ID</label>
+                            <input type="text" id="serviceId" autocomplete="off">
+                        </div>
+                        <div class="form-field">
+                            <label for="templateId" id="templateIdLabel">EmailJS Template ID</label>
+                            <input type="text" id="templateId" autocomplete="off">
+                        </div>
+                        <div class="form-field">
+                            <label for="publicKey" id="publicKeyLabel">EmailJS Public Key</label>
+                            <input type="text" id="publicKey" autocomplete="off">
+                        </div>
+                    </div>
+                </details>
+            </section>
+
+            <section class="status-section" aria-live="polite">
+                <div class="status-banner" id="statusBanner" role="status"></div>
+                <p class="status-updated" id="lastUpdated"></p>
+                <div class="results-container" id="resultsContainer">
+                    <div class="empty-state" id="emptyState">请先添加股票代码。</div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p>示例项目仅用于策略演示，不构成投资建议。</p>
+            <p id="footerNote">示例项目仅用于策略演示，不构成投资建议。</p>
         </div>
     </footer>
 
