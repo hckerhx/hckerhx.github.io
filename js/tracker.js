@@ -162,7 +162,6 @@ const languageButtons = document.querySelectorAll('.lang-button');
 const navMonitor = document.getElementById('navMonitor');
 const navTheory = document.getElementById('navTheory');
 const panelTitle = document.getElementById('panelTitle');
-const panelTheoryLink = document.getElementById('panelTheoryLink');
 const panelLocale = document.getElementById('panelLocale');
 const tickerLabel = document.getElementById('tickerLabel');
 const tickerHelper = document.getElementById('tickerExample');
@@ -340,7 +339,6 @@ function applyLanguage(lang) {
         navTheory.textContent = t.nav.theory;
     }
     panelTitle.textContent = t.panel.title;
-    panelTheoryLink.textContent = t.panel.theory;
     panelLocale.textContent = t.panel.locale;
     tickerLabel.textContent = t.ticker.label;
     tickerHelper.textContent = t.ticker.helper;
