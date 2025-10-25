@@ -22,8 +22,8 @@ const translations = {
         nav: {
             aria: '页面导航',
             brand: '策略实验室',
-            theory: '策略理论',
-            tracker: '下跌监控'
+            theory: '理论界面',
+            tracker: '应用界面'
         },
         hero: {
             label: '策略可视化平台',
@@ -138,8 +138,8 @@ const translations = {
         nav: {
             aria: 'Site navigation',
             brand: 'Strategy Lab',
-            theory: 'Strategy Research',
-            tracker: 'Drawdown Monitor'
+            theory: 'Theory',
+            tracker: 'Application'
         },
         hero: {
             label: 'Strategy Visualization Lab',
