@@ -1457,6 +1457,62 @@ tbody tr:last-child td {
     gap: 1rem;
 }
 
+.chart-card {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 18px;
+    padding: 1.25rem;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+}
+
+.chart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f8fafc;
+    letter-spacing: 0.05em;
+}
+
+.chart-subtitle {
+    font-size: 0.85rem;
+    color: rgba(226, 232, 240, 0.7);
+}
+
+.chart-body {
+    position: relative;
+    height: 320px;
+}
+
+#priceChart {
+    width: 100%;
+    height: 100%;
+}
+
+.chart-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.5rem;
+    color: rgba(226, 232, 240, 0.75);
+    background: rgba(15, 23, 42, 0.85);
+    border-radius: 16px;
+}
+
+.chart-placeholder.hidden {
+    display: none;
+}
+
 .empty-state {
     background: rgba(15, 23, 42, 0.6);
     color: rgba(248, 250, 252, 0.9);
@@ -1473,6 +1529,8 @@ tbody tr:last-child td {
     border: 1px solid rgba(56, 189, 248, 0.15);
     display: grid;
     gap: 0.75rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
 }
 
 .result-header {
@@ -1505,6 +1563,16 @@ tbody tr:last-child td {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 0.75rem;
+}
+
+.result-card.active {
+    border-color: rgba(56, 189, 248, 0.45);
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35);
+}
+
+.result-card:focus-visible {
+    outline: 2px solid rgba(56, 189, 248, 0.5);
+    outline-offset: 3px;
 }
 
 .result-metric {

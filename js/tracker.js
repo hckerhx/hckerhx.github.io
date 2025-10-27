@@ -79,6 +79,15 @@ const translations = {
             updated: '最近更新',
             drop: '回撤'
         },
+        chart: {
+            emptyTitle: '价格走势',
+            title: symbol => `${symbol} 过去一年价格`,
+            subtitle: (months, threshold) => `观测时间：${months}个月 · 幅度控制：${threshold}%`,
+            placeholder: '添加股票后将在此显示价格图。',
+            noData: '暂无足够的历史数据用于绘制图表。',
+            tooltipPrice: '收盘价',
+            tooltipThreshold: '触发阈值'
+        },
         emptyState: '请先添加股票代码。',
         footerNote: '示例项目仅用于策略演示，不构成投资建议。'
     },
@@ -153,6 +162,15 @@ const translations = {
             updated: 'Updated At',
             drop: 'Drawdown'
         },
+        chart: {
+            emptyTitle: 'Price trend',
+            title: symbol => `${symbol} price — last 12 months`,
+            subtitle: (months, threshold) => `Window: ${months} mo · Trigger: ${threshold}%`,
+            placeholder: 'Add a ticker to see its price chart here.',
+            noData: 'Not enough historical data to display the chart.',
+            tooltipPrice: 'Close',
+            tooltipThreshold: 'Threshold breach'
+        },
         emptyState: 'Add tickers to start monitoring.',
         footerNote: 'For illustration only. Not investment advice.'
     }
@@ -176,6 +194,11 @@ const statusBanner = document.getElementById('statusBanner');
 const lastUpdated = document.getElementById('lastUpdated');
 const resultsContainer = document.getElementById('resultsContainer');
 const emptyState = document.getElementById('emptyState');
+const chartCard = document.getElementById('chartCard');
+const chartTitleEl = document.getElementById('chartTitle');
+const chartSubtitleEl = document.getElementById('chartSubtitle');
+const priceChartCanvas = document.getElementById('priceChart');
+const chartPlaceholder = document.getElementById('chartPlaceholder');
 const advancedSummary = document.getElementById('advancedSummary');
 const serviceIdLabel = document.getElementById('serviceIdLabel');
 const serviceIdInput = document.getElementById('serviceId');
@@ -190,6 +213,8 @@ let settings = loadSettings();
 let tickers = loadTickers();
 let emailInitialized = false;
 let refreshTimer;
+let priceChart;
+let activeSymbol = tickers[0]?.symbol || null;
 
 init();
 
@@ -253,7 +278,18 @@ function loadTickers() {
         if (!raw) return [];
         const parsed = JSON.parse(raw);
         if (!Array.isArray(parsed)) return [];
-        return parsed.filter(item => item && typeof item.symbol === 'string');
+        return parsed
+            .filter(item => item && typeof item.symbol === 'string')
+            .map(item => ({
+                symbol: item.symbol,
+                latestPrice: item.latestPrice,
+                latestDate: item.latestDate,
+                highestPrice: item.highestPrice,
+                highestDate: item.highestDate,
+                dropPercent: item.dropPercent,
+                lastUpdated: item.lastUpdated,
+                lastAlertAt: item.lastAlertAt
+            }));
     } catch (error) {
         console.warn('无法解析存储的股票列表，已重置。', error);
         return [];
@@ -261,7 +297,18 @@ function loadTickers() {
 }
 
 function saveTickers() {
-    const stored = tickers.filter(item => item.symbol);
+    const stored = tickers
+        .filter(item => item.symbol)
+        .map(item => ({
+            symbol: item.symbol,
+            latestPrice: item.latestPrice,
+            latestDate: item.latestDate,
+            highestPrice: item.highestPrice,
+            highestDate: item.highestDate,
+            dropPercent: item.dropPercent,
+            lastUpdated: item.lastUpdated,
+            lastAlertAt: item.lastAlertAt
+        }));
     window.localStorage.setItem(TICKERS_KEY, JSON.stringify(stored));
 }
 
@@ -368,6 +415,7 @@ function applyLanguage(lang) {
     });
 
     setUpdatedTime();
+    renderChart();
 }
 
 function renderSettings() {
@@ -555,11 +603,15 @@ function renderResults() {
     resultsContainer.appendChild(emptyState);
     if (!tickers.length) {
         emptyState.classList.remove('hidden');
+        renderChart();
         return;
     }
     const threshold = Number(settings.dropThreshold) || DEFAULT_DROP_THRESHOLD;
     const t = translations[currentLang];
     emptyState.classList.add('hidden');
+    if (!activeSymbol || !tickers.some(item => item.symbol === activeSymbol)) {
+        activeSymbol = tickers[0]?.symbol || null;
+    }
     tickers.forEach(ticker => {
             const card = document.createElement('div');
             card.className = 'result-card';
@@ -597,8 +649,232 @@ function renderResults() {
             metrics.append(statusMetric, latestMetric, highestMetric, highestDateMetric, updatedMetric);
 
             card.append(header, metrics);
+            const isActive = ticker.symbol === activeSymbol;
+            if (isActive) {
+                card.classList.add('active');
+            }
+            card.tabIndex = 0;
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            const selectTicker = () => {
+                if (activeSymbol === ticker.symbol) return;
+                activeSymbol = ticker.symbol;
+                renderResults();
+            };
+            card.addEventListener('click', selectTicker);
+            card.addEventListener('keydown', event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    selectTicker();
+                }
+            });
             resultsContainer.appendChild(card);
         });
+    renderChart();
+}
+
+function renderChart() {
+    if (!chartCard || !chartPlaceholder || !priceChartCanvas) {
+        return;
+    }
+    const t = translations[currentLang];
+    const months = Number.isFinite(settings.observationMonths) && settings.observationMonths > 0
+        ? settings.observationMonths
+        : DEFAULT_OBSERVATION_MONTHS;
+    const threshold = Number.isFinite(settings.dropThreshold) && settings.dropThreshold > 0
+        ? settings.dropThreshold
+        : DEFAULT_DROP_THRESHOLD;
+
+    if (chartSubtitleEl) {
+        chartSubtitleEl.textContent = t.chart.subtitle(months, threshold);
+    }
+
+    if (!tickers.length || !activeSymbol || !tickers.some(item => item.symbol === activeSymbol)) {
+        if (chartTitleEl) {
+            chartTitleEl.textContent = t.chart.emptyTitle;
+        }
+        chartPlaceholder.textContent = t.chart.placeholder;
+        chartPlaceholder.classList.remove('hidden');
+        if (priceChartCanvas) {
+            priceChartCanvas.classList.add('hidden');
+        }
+        if (priceChart) {
+            priceChart.destroy();
+            priceChart = undefined;
+        }
+        return;
+    }
+
+    const ticker = tickers.find(item => item.symbol === activeSymbol);
+    if (chartTitleEl) {
+        chartTitleEl.textContent = t.chart.title(activeSymbol);
+    }
+
+    if (!ticker || !Array.isArray(ticker.history) || !ticker.history.length) {
+        chartPlaceholder.textContent = t.chart.noData;
+        chartPlaceholder.classList.remove('hidden');
+        if (priceChartCanvas) {
+            priceChartCanvas.classList.add('hidden');
+        }
+        if (priceChart) {
+            priceChart.destroy();
+            priceChart = undefined;
+        }
+        return;
+    }
+
+    const { series, mask } = prepareChartSeries(ticker.history, months, threshold);
+    if (!series.length) {
+        chartPlaceholder.textContent = t.chart.noData;
+        chartPlaceholder.classList.remove('hidden');
+        if (priceChartCanvas) {
+            priceChartCanvas.classList.add('hidden');
+        }
+        if (priceChart) {
+            priceChart.destroy();
+            priceChart = undefined;
+        }
+        return;
+    }
+
+    if (priceChart) {
+        priceChart.destroy();
+    }
+
+    const priceData = series.map(entry => ({
+        x: entry.date.getTime(),
+        y: entry.close
+    }));
+    const dropData = series.map((entry, index) => (mask[index] ? { x: entry.date.getTime(), y: entry.close } : null));
+
+    chartPlaceholder.classList.add('hidden');
+    priceChartCanvas.classList.remove('hidden');
+
+    const ctx = priceChartCanvas.getContext('2d');
+    if (!ctx || typeof window.Chart === 'undefined') {
+        chartPlaceholder.textContent = t.chart.noData;
+        chartPlaceholder.classList.remove('hidden');
+        priceChartCanvas.classList.add('hidden');
+        return;
+    }
+
+    const locale = currentLang === 'zh' ? 'zh-CN' : 'en-US';
+    const dateFormatter = new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' });
+
+    priceChart = new window.Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    label: t.chart.tooltipPrice,
+                    data: priceData,
+                    borderColor: 'rgba(96, 165, 250, 0.9)',
+                    backgroundColor: 'rgba(96, 165, 250, 0.15)',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.2
+                },
+                {
+                    label: t.chart.tooltipThreshold,
+                    data: dropData,
+                    borderColor: 'rgba(248, 113, 113, 0.9)',
+                    backgroundColor: 'rgba(248, 113, 113, 0.15)',
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    tension: 0.2,
+                    spanGaps: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    ticks: {
+                        color: 'rgba(226, 232, 240, 0.8)',
+                        callback: value => dateFormatter.format(new Date(value))
+                    },
+                    grid: {
+                        color: 'rgba(148, 163, 184, 0.25)'
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: 'rgba(226, 232, 240, 0.8)',
+                        callback: value => formatCurrency(value)
+                    },
+                    grid: {
+                        color: 'rgba(148, 163, 184, 0.2)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        title: items => {
+                            if (!items?.length) return '';
+                            return dateFormatter.format(new Date(items[0].parsed.x));
+                        },
+                        label: context => {
+                            const labelPrefix = context.datasetIndex === 1 ? t.chart.tooltipThreshold : t.chart.tooltipPrice;
+                            return `${labelPrefix}: ${formatCurrency(context.parsed.y)}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function prepareChartSeries(history, months, threshold) {
+    const sanitized = history
+        .map(entry => {
+            const date = new Date(entry.date);
+            const close = Number.parseFloat(entry.close);
+            return { date, close };
+        })
+        .filter(item => !Number.isNaN(item.date.getTime()) && Number.isFinite(item.close))
+        .sort((a, b) => a.date - b.date);
+
+    const mask = new Array(sanitized.length).fill(false);
+    if (!sanitized.length) {
+        return { series: sanitized, mask };
+    }
+
+    const windowMonths = Number.isFinite(months) && months > 0 ? months : DEFAULT_OBSERVATION_MONTHS;
+    const trigger = Number.isFinite(threshold) && threshold > 0 ? threshold : DEFAULT_DROP_THRESHOLD;
+
+    for (let i = 0; i < sanitized.length; i += 1) {
+        const entry = sanitized[i];
+        const windowStart = new Date(entry.date);
+        windowStart.setMonth(windowStart.getMonth() - windowMonths);
+        let maxClose = entry.close;
+        for (let j = i; j >= 0; j -= 1) {
+            const candidate = sanitized[j];
+            if (candidate.date < windowStart) break;
+            if (candidate.close > maxClose) {
+                maxClose = candidate.close;
+            }
+        }
+        if (maxClose > 0) {
+            const drop = ((maxClose - entry.close) / maxClose) * 100;
+            if (drop >= trigger - 1e-6) {
+                mask[i] = true;
+            }
+        }
+    }
+
+    return { series: sanitized, mask };
 }
 
 function createMetric(label, value) {
@@ -635,6 +911,7 @@ function handleObservationChange() {
     }
     observationInput.value = settings.observationMonths;
     saveSettings();
+    renderChart();
 }
 
 function handleThresholdChange() {
@@ -724,6 +1001,9 @@ async function updateTicker(symbol, { silent = false } = {}) {
     existing.highestDate = data.highestDate;
     existing.dropPercent = data.dropPercent;
     existing.lastUpdated = data.lastUpdated;
+    existing.history = data.history;
+
+    activeSymbol = normalized;
 
     const alertSent = await maybeSendEmail(existing);
     if (alertSent) {
@@ -742,7 +1022,7 @@ async function updateTicker(symbol, { silent = false } = {}) {
 
 async function fetchTicker(symbol) {
     const months = Number.isFinite(settings.observationMonths) ? settings.observationMonths : DEFAULT_OBSERVATION_MONTHS;
-    const fetchMonths = Math.max(months * 2, 6);
+    const fetchMonths = Math.max(months * 2, 12);
     const periodEnd = new Date();
     const periodStart = new Date();
     periodStart.setMonth(periodStart.getMonth() - fetchMonths);
@@ -793,6 +1073,21 @@ async function fetchTicker(symbol) {
         throw new Error('NO_DATA');
     }
 
+    const ascendingEntries = entries.slice().sort((a, b) => a.date - b.date);
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    let yearlyEntries = ascendingEntries.filter(entry => entry.date >= oneYearAgo);
+    if (!yearlyEntries.length) {
+        const maxPoints = Math.min(ascendingEntries.length, 365);
+        yearlyEntries = ascendingEntries.slice(-maxPoints);
+    }
+
+    const history = yearlyEntries.map(entry => ({
+        date: entry.date.toISOString(),
+        close: entry.close
+    }));
+
     const cutoff = new Date();
     cutoff.setMonth(cutoff.getMonth() - months);
 
@@ -817,7 +1112,8 @@ async function fetchTicker(symbol) {
         highestPrice: highestEntry.close,
         highestDate: highestEntry.date.toISOString(),
         dropPercent,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
+        history
     };
 }
 
@@ -905,6 +1201,9 @@ function handleTickerError(error, symbol, row) {
 
 function removeTicker(symbol) {
     tickers = tickers.filter(item => item.symbol !== symbol);
+    if (activeSymbol === symbol) {
+        activeSymbol = tickers[0]?.symbol || null;
+    }
     saveTickers();
     renderTickerInputs();
     renderResults();
