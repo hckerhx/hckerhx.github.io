@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 </head>
 <body class="app-page">
     <div class="language-switcher" role="group" aria-label="语言切换">
@@ -94,6 +95,16 @@
             <section class="status-section" aria-live="polite">
                 <div class="status-banner" id="statusBanner" role="status"></div>
                 <p class="status-updated" id="lastUpdated"></p>
+                <div class="chart-card" id="chartCard" aria-live="polite">
+                    <div class="chart-header">
+                        <h3 class="chart-title" id="chartTitle">价格走势</h3>
+                        <span class="chart-subtitle" id="chartSubtitle"></span>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="priceChart" role="img" aria-label="Stock price trend"></canvas>
+                        <div class="chart-placeholder" id="chartPlaceholder">添加股票后将在此显示价格图。</div>
+                    </div>
+                </div>
                 <div class="results-container" id="resultsContainer">
                     <div class="empty-state" id="emptyState">请先添加股票代码。</div>
                 </div>
