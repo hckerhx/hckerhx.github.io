@@ -376,10 +376,11 @@ function renderChart() {
 async function fetchStockHistory(symbol) {
     // Yahoo Finance Chart API (public endpoint)
     // We request 1 year of data with daily intervals
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1d`;
-
-    // Note: This might hit CORS issues on some deployments (e.g., GitHub Pages)
-    // If so, a CORS proxy is needed. For this 'whiteboard' demo, we try direct fetch.
+    // Use a CORS proxy to bypass browser restrictions
+    // Note: In a production backend, you would proxy this yourself.
+    const symbolClean = symbol.toUpperCase().replace(/\.HK$/, ''); // Handle HK suffix if needed, though YF uses .HK
+    const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1d`;
+    const url = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`Yahoo API limit or network error: ${response.status}`);

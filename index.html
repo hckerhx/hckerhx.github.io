@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 </head>
+
 <body>
     <div class="language-switcher">
         <button class="lang-button active" data-lang="zh">中文</button>
@@ -34,9 +37,10 @@
             <!-- Ticker Input Area -->
             <section class="ticker-board">
                 <div class="input-wrapper">
-                    <input type="text" id="newTickerInput" class="ticker-input-large" placeholder="输入代码 (如 AAPL)" autocomplete="off">
+                    <input type="text" id="newTickerInput" class="ticker-input-large" placeholder="输入代码 (如 AAPL)"
+                        autocomplete="off">
                 </div>
-                
+
                 <div class="ticker-history" id="tickerList">
                     <!-- Historical tags will be injected here via JS -->
                     <!-- Example: <span class="history-tag">AAPL <span class="remove-btn">x</span></span> -->
@@ -54,7 +58,7 @@
                         <h3 id="chartTitle">价格走势</h3>
                         <div id="chartSubtitle" style="font-size:0.8rem; opacity:0.7"></div>
                     </div>
-                    
+
                     <div class="chart-body">
                         <canvas id="priceChart"></canvas>
                         <div class="chart-placeholder" id="chartPlaceholder">输入代码查看走势</div>
@@ -86,9 +90,9 @@
                     <button class="button" id="savePreferences">保存设置</button>
                     <button class="button secondary" id="refreshAll">刷新数据</button>
                 </div>
-                
+
                 <hr style="margin:1rem 0; border:none; border-top:1px dashed #ccc;">
-                
+
                 <!-- Advanced EmailJS keys (hidden or minimized) -->
                 <details>
                     <summary style="cursor:pointer; opacity:0.6;">API Keys</summary>
@@ -111,13 +115,14 @@
 
     <!-- Minimal script to handle the toggle view, rest handled by tracker.js -->
     <script>
-        document.getElementById('toggleSettings').addEventListener('click', function() {
+        document.getElementById('toggleSettings').addEventListener('click', function () {
             document.getElementById('settingsPanel').classList.toggle('open');
-            this.textContent = document.getElementById('settingsPanel').classList.contains('open') 
-                ? '隐藏设置' 
+            this.textContent = document.getElementById('settingsPanel').classList.contains('open')
+                ? '隐藏设置'
                 : '显示更多设置';
         });
     </script>
-    <script src="js/tracker.js" type="module"></script>
+    <script src="js/tracker.js"></script>
 </body>
+
 </html>
