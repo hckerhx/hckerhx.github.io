@@ -1403,7 +1403,12 @@ function init() {
     setupInvestmentPlanner();
     setupSubscriptionForm();
     setLanguage(currentLanguage);
+    setupSubscriptionForm();
+    setLanguage(currentLanguage);
     startLiveRefresh();
+
+    // Remove loading class after init to prevent flash
+    document.body.classList.remove('js-loading');
 }
 
 document.addEventListener('DOMContentLoaded', init);

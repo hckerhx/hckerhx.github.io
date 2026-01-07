@@ -2,11 +2,12 @@
     --bg-color: #ffffff;
     --text-primary: #1e1e1e;
     --text-secondary: #6965db;
-    --accent: #6965db; 
+    --accent: #6965db;
     --accent-strong: #E03E3E;
     --border-color: #1e1e1e;
     --font-hand: 'Patrick Hand', cursive;
-    --font-ui: 'Patrick Hand', cursive; /* Using handwritten font for everything */
+    --font-ui: 'Patrick Hand', cursive;
+    /* Using handwritten font for everything */
     --sketch-border: 2px solid #1e1e1e;
     --sketch-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
 }
@@ -21,6 +22,17 @@ body {
     font-family: var(--font-hand);
     font-size: 1.1rem;
     line-height: 1.6;
+    --shadow-sm: 2px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Anti-flicker loading state */
+.js-loading {
+    opacity: 0 !important;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in;
+}
+
+body {
     color: var(--text-primary);
     background-color: var(--bg-color);
     /* Subtle dot grid background */
@@ -36,8 +48,14 @@ body {
 }
 
 /* --- Typography --- */
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 400; /* Handwritten fonts usually have their own weight */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 400;
+    /* Handwritten fonts usually have their own weight */
     color: var(--text-primary);
 }
 
@@ -47,6 +65,7 @@ a {
     border-bottom: 2px solid transparent;
     transition: border-color 0.2s;
 }
+
 a:hover {
     border-bottom-color: var(--accent);
 }
@@ -84,7 +103,7 @@ a:hover {
     padding: 0.2rem 0.6rem;
     border-radius: 50%;
     /* More irregular circle for icon buttons */
-    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; 
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
 }
 
 /* --- Header / Nav --- */
@@ -116,6 +135,7 @@ a:hover {
     right: 2rem;
     font-size: 0.9rem;
 }
+
 .lang-button {
     background: none;
     border: none;
@@ -124,6 +144,7 @@ a:hover {
     text-decoration: underline;
     opacity: 0.6;
 }
+
 .lang-button.active {
     opacity: 1;
     font-weight: bold;
@@ -149,7 +170,10 @@ a:hover {
 }
 
 /* --- Panel / Cards --- */
-.application-panel, .card, .section, .tracker-main {
+.application-panel,
+.card,
+.section,
+.tracker-main {
     margin-bottom: 3rem;
 }
 
@@ -177,7 +201,7 @@ a:hover {
     background: #fff;
     border: 2px solid #1e1e1e;
     /* Sketchy box */
-    border-radius: 2px 255px 3px 25px / 255px 5px 225px 5px; 
+    border-radius: 2px 255px 3px 25px / 255px 5px 225px 5px;
     box-shadow: 5px 5px 0px #1e1e1e;
     padding: 2rem;
     text-align: center;
@@ -208,6 +232,7 @@ input.ticker-input-large {
     outline: none;
     background: #f9f9f9;
 }
+
 input.ticker-input-large:focus {
     box-shadow: 2px 2px 0 #6965db;
     border-color: #6965db;
@@ -229,20 +254,24 @@ input.ticker-input-large:focus {
     cursor: pointer;
     transition: transform 0.1s;
 }
+
 .history-tag:hover {
     transform: scale(1.05);
     background: #f0f0f0;
 }
+
 .history-tag.active {
     background: #6965db;
     color: #fff;
     border-color: #6965db;
 }
+
 .history-tag .remove-btn {
     margin-left: 0.5rem;
     opacity: 0.6;
     font-size: 0.8em;
 }
+
 .history-tag .remove-btn:hover {
     opacity: 1;
     color: #000;
@@ -256,8 +285,14 @@ input.ticker-input-large:focus {
     min-height: 1.5em;
     font-weight: bold;
 }
-.status-banner[data-status="error"] { color: var(--accent-strong); }
-.status-banner[data-status="success"] { color: #2e7d32; }
+
+.status-banner[data-status="error"] {
+    color: var(--accent-strong);
+}
+
+.status-banner[data-status="success"] {
+    color: #2e7d32;
+}
 
 /* --- Chart Area --- */
 .chart-card {
@@ -265,8 +300,9 @@ input.ticker-input-large:focus {
     padding: 1rem;
     background: #fff;
     border: 2px solid #1e1e1e;
-    border-radius: 5px 5px 5px 5px / 5px 5px 5px 5px; /* straighter box for chart */
-    box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+    border-radius: 5px 5px 5px 5px / 5px 5px 5px 5px;
+    /* straighter box for chart */
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
     position: relative;
 }
 
@@ -295,8 +331,9 @@ input.ticker-input-large:focus {
     padding: 1rem;
     border: 1px dashed #999;
     border-radius: 10px;
-    background: rgba(255,255,255,0.8);
+    background: rgba(255, 255, 255, 0.8);
 }
+
 .settings-panel.open {
     display: block;
 }
@@ -308,9 +345,11 @@ input.ticker-input-large:focus {
     align-items: center;
     gap: 1rem;
 }
+
 .control-group label {
     font-weight: bold;
 }
+
 .control-group input {
     font-family: var(--font-hand);
     padding: 0.3rem;
@@ -335,6 +374,7 @@ input.ticker-input-large:focus {
     padding: 0.8rem 1.2rem;
     border-bottom: 1px solid #e0e0e0;
 }
+
 .result-card.active {
     background: #f0f0ff;
     border: 1px solid #6965db;
@@ -357,17 +397,39 @@ input.ticker-input-large:focus {
     border-radius: 2px 255px 3px 25px / 255px 5px 225px 5px;
     box-shadow: 5px 5px 0px #1e1e1e;
 }
-.theory-content h2 { margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
-.theory-content p { margin-bottom: 1rem; }
-.list li { list-style: square; margin-left: 1.5rem; margin-bottom: 0.5rem; }
+
+.theory-content h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.theory-content p {
+    margin-bottom: 1rem;
+}
+
+.list li {
+    list-style: square;
+    margin-left: 1.5rem;
+    margin-bottom: 0.5rem;
+}
 
 /* Utilities */
-.hidden { display: none !important; }
-.danger { color: var(--accent-strong); }
+.hidden {
+    display: none !important;
+}
+
+.danger {
+    color: var(--accent-strong);
+}
 
 @media (max-width: 600px) {
     .ticker-history {
         justify-content: center;
     }
-    .hero h1 { font-size: 2rem; }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
 }
