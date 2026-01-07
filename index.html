@@ -4,120 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>策略实验室 - 下跌监控</title>
+    <!-- Handwritten Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 </head>
-<body class="app-page">
-    <div class="language-switcher" role="group" aria-label="语言切换">
+<body>
+    <div class="language-switcher">
         <button class="lang-button active" data-lang="zh">中文</button>
         <button class="lang-button" data-lang="en">EN</button>
     </div>
 
-    <nav class="site-nav" aria-label="页面导航">
+    <nav class="site-nav">
         <div class="nav-container">
-            <div class="nav-buttons" role="navigation" aria-label="主要页面">
-                <a class="nav-link active" id="navMonitor" href="index.html" aria-current="page">下跌监控</a>
-                <a class="nav-link" id="navTheory" href="theory.html">策略理论</a>
-            </div>
+            <a class="nav-link" id="navMonitor" href="index.html">下跌监控</a>
+            <a class="nav-link" id="navTheory" href="theory.html">策略理论</a>
         </div>
     </nav>
 
-    <main class="app-layout">
-        <div class="container app-container">
-            <section class="application-panel" aria-labelledby="panelTitle">
-                <header class="panel-header">
-                    <h2 class="panel-title" id="panelTitle">下跌监控</h2>
-                    <span class="panel-locale" id="panelLocale">中 / 英</span>
-                </header>
+    <div class="container app-container">
+        <!-- Main Monitor Panel -->
+        <main class="application-panel">
+            <header class="panel-header">
+                <h1 class="panel-title" id="panelTitle">下跌监控</h1>
+                <p class="panel-locale" id="heroSubtitle">简单直观的策略辅助工具</p>
+            </header>
 
-                <div class="panel-body">
-                    <section class="ticker-board" aria-labelledby="tickerLabel">
-                        <div class="ticker-header">
-                            <label class="panel-label" id="tickerLabel" for="newTickerInput">股票代码：</label>
-                            <button type="button" class="icon-button" id="addTicker" aria-label="添加股票">＋</button>
-                        </div>
-                        <div class="ticker-list" id="tickerList"></div>
-                        <p class="panel-helper" id="tickerExample">例如：AAPL、MSFT、0700.HK</p>
-                    </section>
+            <!-- Ticker Input Area -->
+            <section class="ticker-board">
+                <div class="input-wrapper">
+                    <input type="text" id="newTickerInput" class="ticker-input-large" placeholder="输入代码 (如 AAPL)" autocomplete="off">
+                </div>
+                
+                <div class="ticker-history" id="tickerList">
+                    <!-- Historical tags will be injected here via JS -->
+                    <!-- Example: <span class="history-tag">AAPL <span class="remove-btn">x</span></span> -->
+                </div>
+                <p style="margin-top:1rem; font-size:0.9rem; opacity:0.6;" id="tickerExample">支持美股与港股</p>
+            </section>
 
-                    <aside class="panel-controls" aria-label="监控参数">
-                        <div class="control-block">
-                            <h3 class="control-title" id="observationTitle">观测时间</h3>
-                            <div class="control-field">
-                                <input type="number" id="observationMonths" min="1" max="12" value="2" aria-describedby="observationHelper">
-                                <span class="control-unit" id="observationUnit">个月</span>
-                            </div>
-                            <p class="control-helper" id="observationHelper">默认 2 个月</p>
-                        </div>
-                        <div class="control-block">
-                            <h3 class="control-title" id="thresholdTitle">幅度控制</h3>
-                            <div class="control-field">
-                                <input type="number" id="dropThreshold" min="5" max="80" step="1" value="20" aria-describedby="thresholdHelper">
-                                <span class="control-unit">%</span>
-                            </div>
-                            <p class="control-helper" id="thresholdHelper">默认 20%</p>
-                        </div>
-                    </aside>
+            <!-- Status Message -->
+            <div class="status-banner" id="statusBanner"></div>
+
+            <!-- Chart & Results Area -->
+            <section class="chart-area">
+                <div class="chart-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h3 id="chartTitle">价格走势</h3>
+                        <div id="chartSubtitle" style="font-size:0.8rem; opacity:0.7"></div>
+                    </div>
+                    
+                    <div class="chart-body">
+                        <canvas id="priceChart"></canvas>
+                        <div class="chart-placeholder" id="chartPlaceholder">输入代码查看走势</div>
+                    </div>
                 </div>
 
-                <footer class="panel-footer">
-                    <div class="email-field">
-                        <label for="alertEmail" id="emailLabel">邮箱</label>
-                        <input type="email" id="alertEmail" placeholder="you@example.com">
-                    </div>
-                    <div class="panel-actions">
-                        <button type="button" class="button secondary" id="savePreferences">保存设置</button>
-                        <button type="button" class="button" id="refreshAll">刷新全部</button>
-                    </div>
-                </footer>
+                <!-- Hidden / Simplified Results container for data storage/logic compatibility -->
+                <div id="resultsContainer" class="results-container hidden"></div>
+            </section>
 
-                <details class="advanced-settings" id="advancedSettings">
-                    <summary id="advancedSummary">提醒服务配置</summary>
-                    <div class="settings-grid">
-                        <div class="form-field">
-                            <label for="serviceId" id="serviceIdLabel">EmailJS Service ID</label>
-                            <input type="text" id="serviceId" autocomplete="off">
-                        </div>
-                        <div class="form-field">
-                            <label for="templateId" id="templateIdLabel">EmailJS Template ID</label>
-                            <input type="text" id="templateId" autocomplete="off">
-                        </div>
-                        <div class="form-field">
-                            <label for="publicKey" id="publicKeyLabel">EmailJS Public Key</label>
-                            <input type="text" id="publicKey" autocomplete="off">
-                        </div>
+            <!-- Settings Toggle -->
+            <div class="adv-settings-toggle" id="toggleSettings">显示更多设置</div>
+
+            <!-- Collapsible Settings Panel -->
+            <div class="settings-panel" id="settingsPanel">
+                <div class="control-group">
+                    <label id="observationTitle">观测时间 (月)</label>
+                    <input type="number" id="observationMonths" min="1" max="12" value="2">
+                </div>
+                <div class="control-group">
+                    <label id="thresholdTitle">买入阈值 (%)</label>
+                    <input type="number" id="dropThreshold" min="5" max="80" value="20">
+                </div>
+                <div class="control-group">
+                    <label id="emailLabel">提醒邮箱</label>
+                    <input type="email" id="alertEmail" placeholder="you@example.com" style="width:200px;">
+                </div>
+                <div style="text-align:center; margin-top:1rem;">
+                    <button class="button" id="savePreferences">保存设置</button>
+                    <button class="button secondary" id="refreshAll">刷新数据</button>
+                </div>
+                
+                <hr style="margin:1rem 0; border:none; border-top:1px dashed #ccc;">
+                
+                <!-- Advanced EmailJS keys (hidden or minimized) -->
+                <details>
+                    <summary style="cursor:pointer; opacity:0.6;">API Keys</summary>
+                    <div class="control-group" style="margin-top:0.5rem;">
+                        <input type="text" id="serviceId" placeholder="Service ID">
+                        <input type="text" id="templateId" placeholder="Template ID">
+                        <input type="text" id="publicKey" placeholder="Public Key">
                     </div>
                 </details>
-            </section>
+            </div>
 
-            <section class="status-section" aria-live="polite">
-                <div class="status-banner" id="statusBanner" role="status"></div>
-                <p class="status-updated" id="lastUpdated"></p>
-                <div class="chart-card" id="chartCard" aria-live="polite">
-                    <div class="chart-header">
-                        <h3 class="chart-title" id="chartTitle">价格走势</h3>
-                        <span class="chart-subtitle" id="chartSubtitle"></span>
-                    </div>
-                    <div class="chart-body">
-                        <canvas id="priceChart" role="img" aria-label="Stock price trend"></canvas>
-                        <div class="chart-placeholder" id="chartPlaceholder">添加股票后将在此显示价格图。</div>
-                    </div>
-                </div>
-                <div class="results-container" id="resultsContainer">
-                    <div class="empty-state" id="emptyState">请先添加股票代码。</div>
-                </div>
-            </section>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <footer class="footer">
         <div class="container">
-            <p id="footerNote">示例项目仅用于策略演示，不构成投资建议。</p>
+            <p id="footerNote">Invest at your own risk. Not financial advice.</p>
         </div>
     </footer>
 
+    <!-- Minimal script to handle the toggle view, rest handled by tracker.js -->
+    <script>
+        document.getElementById('toggleSettings').addEventListener('click', function() {
+            document.getElementById('settingsPanel').classList.toggle('open');
+            this.textContent = document.getElementById('settingsPanel').classList.contains('open') 
+                ? '隐藏设置' 
+                : '显示更多设置';
+        });
+    </script>
     <script src="js/tracker.js" type="module"></script>
 </body>
 </html>
