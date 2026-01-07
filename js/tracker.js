@@ -107,7 +107,17 @@ function init() {
     if (activeSymbol) {
         renderChart();
     }
+    if (activeSymbol) {
+        renderChart();
+    }
+    initEmailJS();
     initEventListeners();
+}
+
+function initEmailJS() {
+    if (settings.email.publicKey && window.emailjs) {
+        emailjs.init(settings.email.publicKey);
+    }
 }
 
 function loadLanguage() {
@@ -448,7 +458,58 @@ async function updateTicker(symbol) {
     } else {
         tickers.push(newTicker);
     }
+    if (existingIndex >= 0) {
+        tickers[existingIndex] = newTicker;
+    } else {
+        tickers.push(newTicker);
+    }
     saveTickers();
+    checkAlerts(newTicker);
+}
+
+async function checkAlerts(ticker) {
+    const { dropThreshold, email } = settings;
+    // Check if drop exceeds threshold
+    if (ticker.dropPercent >= dropThreshold) {
+        // Check cooldown (prevent spam)
+        const now = new Date();
+        const lastAlert = ticker.lastAlert ? new Date(ticker.lastAlert) : null;
+
+        // Cooldown check (e.g., 3 days)
+        if (lastAlert && (now - lastAlert) < (ALERT_COOLDOWN_DAYS * 24 * 60 * 60 * 1000)) {
+            console.log(`Alert suppressed for ${ticker.symbol}: cooldown active.`);
+            return;
+        }
+
+        // Prepare email params
+        const params = {
+            symbol: ticker.symbol,
+            price: ticker.latestPrice.toFixed(2),
+            drop_percent: ticker.dropPercent.toFixed(2),
+            threshold: dropThreshold,
+            to_email: email.toEmail
+        };
+
+        // Try to send email
+        try {
+            if (email.serviceId && email.templateId && email.publicKey && window.emailjs) {
+                await emailjs.send(email.serviceId, email.templateId, params);
+                showStatus(`📧 Email alert sent for ${ticker.symbol}!`, 'success');
+            } else {
+                // Simulation Mode
+                console.log('Simulating Email Alert:', params);
+                showStatus(`📧 [TEST] Alert triggered for ${ticker.symbol} (Simulation)`, 'success');
+            }
+
+            // Update last alert time
+            ticker.lastAlert = now.toISOString();
+            saveTickers();
+
+        } catch (e) {
+            console.error('Failed to send email alert:', e);
+            showStatus('Failed to send email alert.', 'error');
+        }
+    }
 }
 
 async function refreshAllTickers() {
