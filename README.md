@@ -1,7 +1,5 @@
 # Tactical Drawdown Strategy Lab
 
-# Tactical Drawdown Strategy Lab
-
 一个用于展示“头部公司深跌买入”投资策略的静态网站。聚焦 Mag 7 科技龙头在深度回撤后的表现，并提供实时的下跌监控与邮件提醒功能。
 
 ## 📸 界面预览
