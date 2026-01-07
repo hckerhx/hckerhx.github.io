@@ -371,30 +371,74 @@ function renderChart() {
     });
 }
 
-// --- Mock/Real Update Logic ---
+// --- Real Yahoo Finance API Logic ---
 
-async function updateTicker(symbol) {
-    // Mock Data for "Excalidraw" demo purposes if real API is missing
-    const now = new Date();
-    const history = [];
-    let price = 150 + Math.random() * 50;
-    for (let i = 0; i < 30; i++) {
-        history.push({
-            date: new Date(now.getTime() - (30 - i) * 24 * 60 * 60 * 1000).toISOString(),
-            close: price
-        });
-        price += (Math.random() - 0.5) * 5;
+async function fetchStockHistory(symbol) {
+    // Yahoo Finance Chart API (public endpoint)
+    // We request 1 year of data with daily intervals
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1d`;
+
+    // Note: This might hit CORS issues on some deployments (e.g., GitHub Pages)
+    // If so, a CORS proxy is needed. For this 'whiteboard' demo, we try direct fetch.
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Yahoo API limit or network error: ${response.status}`);
     }
 
-    // Drop logic
-    const dropPercent = ((Math.max(...history.map(h => h.close)) - history[history.length - 1].close) / Math.max(...history.map(h => h.close))) * 100;
+    const json = await response.json();
+    const result = json.chart.result[0];
 
+    if (!result || !result.timestamp || !result.indicators.quote[0]) {
+        throw new Error('Invalid data structure from Yahoo');
+    }
+
+    const timestamps = result.timestamp;
+    const quotes = result.indicators.quote[0];
+    const closes = quotes.close;
+
+    const history = [];
+    for (let i = 0; i < timestamps.length; i++) {
+        if (timestamps[i] && closes[i] !== null) {
+            history.push({
+                date: new Date(timestamps[i] * 1000).toISOString(),
+                close: closes[i]
+            });
+        }
+    }
+
+    return history;
+}
+
+async function updateTicker(symbol) {
+    // Fetch real history
+    let history = [];
+    try {
+        history = await fetchStockHistory(symbol);
+    } catch (e) {
+        console.warn(`Direct fetch failed for ${symbol}, trying fallback/proxy if available...`, e);
+        // Fallback or re-throw? For visible UI feedback, re-throw so the user sees "Network error"
+        throw e;
+    }
+
+    if (history.length === 0) {
+        throw new Error('No history data found');
+    }
+
+    const latestPrice = history[history.length - 1].close;
+
+    // Calculate Drop from 1-Year High (or window high)
+    // We use the full fetched history (1 year) for the "Highest" reference usually
+    const maxPrice = Math.max(...history.map(h => h.close));
+    const dropPercent = ((maxPrice - latestPrice) / maxPrice) * 100;
+
+    const now = new Date();
     const existingIndex = tickers.findIndex(t => t.symbol === symbol);
+
     const newTicker = {
         symbol,
-        latestPrice: history[history.length - 1].close,
+        latestPrice,
         dropPercent,
-        history,
+        history, // Store full history for chart
         lastUpdated: now.toISOString()
     };
 
