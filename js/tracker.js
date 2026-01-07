@@ -107,11 +107,11 @@ function init() {
     if (activeSymbol) {
         renderChart();
     }
-    if (activeSymbol) {
-        renderChart();
-    }
     initEmailJS();
     initEventListeners();
+
+    // Remove loading class after init to prevent flash
+    document.body.classList.remove('js-loading');
 }
 
 function initEmailJS() {
