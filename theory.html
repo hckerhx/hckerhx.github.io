@@ -19,17 +19,17 @@
 
     <nav class="site-nav">
         <div class="nav-container">
-            <a class="nav-link" href="index.html">下跌监控</a>
-            <a class="nav-link active" href="theory.html"
-                style="font-weight:bold; border-bottom:2px solid #1e1e1e;">策略理论</a>
+            <a class="nav-link" href="index.html" data-i18n="nav.monitor">下跌监控</a>
+            <a class="nav-link active" href="theory.html" style="font-weight:bold; border-bottom:2px solid #1e1e1e;"
+                data-i18n="nav.theory">策略理论</a>
         </div>
     </nav>
 
     <header class="hero">
         <div class="container">
-            <h1>头部公司深跌买入策略</h1>
-            <p class="hero-subtitle">
-                当 Mag 7 科技龙头因宏观或财报事件急跌超过 20% 时逆向加仓。
+            <h1 data-i18n="hero.title">头部公司深跌买入策略实验室</h1>
+            <p class="hero-subtitle" data-i18n="hero.subtitle">
+                当Mag 7 科技龙头因宏观或财报事件急跌超过20%时逆向加仓，持有2-3年，并与长期定投 S&P 500 与 QQQ 的表现进行对比，同时跟踪实时组合净值。
             </p>
         </div>
     </header>
@@ -38,20 +38,20 @@
 
         <!-- Assumptions -->
         <section class="theory-content">
-            <h2>策略核心假设</h2>
+            <h2 data-i18n="sections.assumptionsTitle">策略核心假设</h2>
             <ul class="list">
-                <li>聚焦具备稳定盈利和技术护城河的头部公司。</li>
-                <li>当股价在一个季度内回撤超过 20% 时触发“深跌买入”。</li>
-                <li>分批买入后持有 2-3 年，等待业绩与估值修复。</li>
-                <li>持仓收益与 S&P 500、QQQ 定投结果进行长期对照。</li>
+                <li data-i18n="sections.assumptionsItems.0">聚焦具备稳定盈利和技术护城河的头部公司。</li>
+                <li data-i18n="sections.assumptionsItems.1">当股价在一个季度内回撤超过20%时触发“深跌买入”。</li>
+                <li data-i18n="sections.assumptionsItems.2">分批买入后持有2-3年，等待业绩与估值修复。</li>
+                <li data-i18n="sections.assumptionsItems.3">持仓收益与 S&P 500、QQQ 定投结果进行长期对照。</li>
             </ul>
         </section>
 
         <!-- Mag 7 Chart -->
         <section class="chart-card" style="margin-top:3rem;">
-            <h2>Mag 7 策略 vs. 指数定投</h2>
-            <p style="margin-bottom:1rem; opacity:0.8;">
-                历史回测显示，深跌买入策略在科技龙头上的反弹弹性极强。
+            <h2 data-i18n="sections.mag7Title">Mag 7 策略 vs. 指数定投</h2>
+            <p style="margin-bottom:1rem; opacity:0.8;" data-i18n="sections.mag7Intro">
+                深跌买入策略在科技龙头上的表现显示出极强的反弹弹性，尤其在2020年疫情与2022年估值纠偏后，净值恢复速度明显快于被动定投组合。
             </p>
             <div style="height:400px; position:relative;">
                 <canvas id="mag7Chart"></canvas>
@@ -60,15 +60,16 @@
 
         <!-- Investment Planner -->
         <section class="theory-content" style="margin-top:3rem;">
-            <h2>投入金额推演</h2>
-            <p>输入计划投入金额，查看分批买入建议。</p>
+            <h2 data-i18n="investment.title">投入金额推演</h2>
+            <p data-i18n="investment.intro">输入计划投入金额，系统将按照历次回撤事件给出分批买入与持有的参考方案。</p>
 
             <form id="investmentForm"
                 style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
-                <label for="investmentAmount" style="font-weight:bold;">金额 (USD)</label>
+                <label for="investmentAmount" style="font-weight:bold;" data-i18n="investment.formLabel">计划投入金额
+                    (USD)</label>
                 <input type="number" id="investmentAmount" min="0" value="10000"
                     style="padding:0.5rem; font-family:var(--font-hand); font-size:1.1rem; border:2px solid #1e1e1e; border-radius:5px;">
-                <button type="submit" class="button">生成建议</button>
+                <button type="submit" class="button" data-i18n="investment.submit">生成操作建议</button>
             </form>
 
             <div id="planResults" style="margin-top:2rem;"></div>
@@ -76,26 +77,26 @@
 
         <!-- Live Metrics -->
         <section class="section" style="margin-top:3rem;">
-            <h2 style="text-align:center; margin-bottom:2rem;">实时净值 (Yahoo Finance)</h2>
+            <h2 style="text-align:center; margin-bottom:2rem;" data-i18n="sections.liveTitle">实时组合净值对比</h2>
             <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center;">
 
                 <div class="card"
                     style="padding:1.5rem; border:2px solid #1e1e1e; border-radius:15px; min-width:200px;">
-                    <h3>Mag 7</h3>
+                    <h3 data-i18n="live.mag7Title">Mag 7 等权组合</h3>
                     <div style="font-size:2rem; font-weight:bold; color:var(--accent);" id="mag7LiveValue">--</div>
                     <div id="mag7LiveChange">--</div>
                 </div>
 
                 <div class="card"
                     style="padding:1.5rem; border:2px solid #1e1e1e; border-radius:15px; min-width:200px;">
-                    <h3>S&P 500</h3>
+                    <h3 data-i18n="live.spTitle">S&P 500 (SPY)</h3>
                     <div style="font-size:2rem; font-weight:bold;" id="spLiveValue">--</div>
                     <div id="spLiveChange">--</div>
                 </div>
 
                 <div class="card"
                     style="padding:1.5rem; border:2px solid #1e1e1e; border-radius:15px; min-width:200px;">
-                    <h3>QQQ</h3>
+                    <h3 data-i18n="live.qqqTitle">纳斯达克 100 (QQQ)</h3>
                     <div style="font-size:2rem; font-weight:bold;" id="qqqLiveValue">--</div>
                     <div id="qqqLiveChange">--</div>
                 </div>
@@ -108,11 +109,11 @@
 
     <footer class="footer">
         <div class="container">
-            <p>数据用于策略示意，投资需结合实际财务状况与风险承受能力。</p>
+            <p data-i18n="footer.note">数据用于策略示意，投资需结合实际财务状况与风险承受能力。</p>
         </div>
     </footer>
 
-    <script src="js/app.js"></script>
+    <script src="js/theory.js"></script>
 </body>
 
 </html>

@@ -792,6 +792,7 @@ function createMetricCard({ title, value, description }) {
 
 function renderHeroMetrics(cards) {
     const container = document.getElementById('heroMetrics');
+    if (!container) return;
     container.innerHTML = '';
     cards.forEach(metric => container.appendChild(createMetricCard(metric)));
 }
@@ -957,6 +958,7 @@ function renderInvestmentPlanner(lang) {
 
 function renderInsights(data, lang) {
     const wrapper = document.getElementById('insights');
+    if (!wrapper) return;
     wrapper.innerHTML = '';
     data.forEach(item => {
         const card = document.createElement('article');
@@ -1085,6 +1087,7 @@ function buildMetricsChart(ctx, metrics, config) {
 
 function populateMetricsTable(metrics, signalsCount, lang, triggerUnit) {
     const tbody = document.getElementById('metricsTableBody');
+    if (!tbody) return;
     tbody.innerHTML = '';
     metrics.forEach(metric => {
         const tr = document.createElement('tr');
@@ -1163,48 +1166,56 @@ function renderInsightsSection(lang) {
 }
 
 function renderCharts(lang) {
-    if (charts.mag7) charts.mag7.destroy();
-    charts.mag7 = buildLineChart(
-        document.getElementById('mag7Chart'),
-        [
-            {
-                label: strategyLabels.mag7Strategy[lang],
-                data: series.mag7Strategy,
-                borderColor: '#38bdf8',
-                backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                borderWidth: 3,
-                tension: 0.35
-            },
-            {
-                label: strategyLabels.sp500DCA[lang],
-                data: series.sp500DCA,
-                borderColor: '#94a3b8',
-                backgroundColor: 'rgba(148, 163, 184, 0.15)',
-                borderWidth: 2,
-                tension: 0.35
-            },
-            {
-                label: strategyLabels.qqqDCA[lang],
-                data: series.qqqDCA,
-                borderColor: '#f97316',
-                backgroundColor: 'rgba(249, 115, 22, 0.12)',
-                borderWidth: 2,
-                tension: 0.35
-            }
-        ],
-        { yAxisLabel: translations[lang].charts.navLabel }
-    );
+    const mag7Canvas = document.getElementById('mag7Chart');
+    if (mag7Canvas) {
+        if (charts.mag7) charts.mag7.destroy();
+        charts.mag7 = buildLineChart(
+            mag7Canvas,
+            [
+                {
+                    label: strategyLabels.mag7Strategy[lang],
+                    data: series.mag7Strategy,
+                    borderColor: '#38bdf8',
+                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.35
+                },
+                {
+                    label: strategyLabels.sp500DCA[lang],
+                    data: series.sp500DCA,
+                    borderColor: '#94a3b8',
+                    backgroundColor: 'rgba(148, 163, 184, 0.15)',
+                    borderWidth: 2,
+                    tension: 0.35
+                },
+                {
+                    label: strategyLabels.qqqDCA[lang],
+                    data: series.qqqDCA,
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.12)',
+                    borderWidth: 2,
+                    tension: 0.35
+                }
+            ],
+            { yAxisLabel: translations[lang].charts.navLabel }
+        );
 
-    if (charts.metrics) charts.metrics.destroy();
-    charts.metrics = buildMetricsChart(
-        document.getElementById('metricsChart'),
-        state.metrics,
-        {
-            labels: state.metrics.map(metric => strategyLabels[metric.id][lang]),
-            datasetLabels: translations[lang].charts.datasetLabels,
-            yAxisLabel: translations[lang].charts.metricsYAxis
-        }
-    );
+
+    }
+
+    const metricsCanvas = document.getElementById('metricsChart');
+    if (metricsCanvas) {
+        if (charts.metrics) charts.metrics.destroy();
+        charts.metrics = buildMetricsChart(
+            metricsCanvas,
+            state.metrics,
+            {
+                labels: state.metrics.map(metric => strategyLabels[metric.id][lang]),
+                datasetLabels: translations[lang].charts.datasetLabels,
+                yAxisLabel: translations[lang].charts.metricsYAxis
+            }
+        );
+    }
 }
 
 function renderTable(lang) {
@@ -1212,8 +1223,11 @@ function renderTable(lang) {
 }
 
 function updateAriaLabels(lang) {
-    document.getElementById('mag7Chart').setAttribute('aria-label', translations[lang].charts.mag7Aria);
-    document.getElementById('metricsChart').setAttribute('aria-label', translations[lang].charts.metricsAria);
+    const mag7Chart = document.getElementById('mag7Chart');
+    if (mag7Chart) mag7Chart.setAttribute('aria-label', translations[lang].charts.mag7Aria);
+
+    const metricsChart = document.getElementById('metricsChart');
+    if (metricsChart) metricsChart.setAttribute('aria-label', translations[lang].charts.metricsAria);
     const switcher = document.querySelector('.language-switcher');
     if (switcher) {
         switcher.setAttribute('aria-label', translations[lang].languageSwitcherAria);
@@ -1251,6 +1265,7 @@ function setupLanguageSwitcher() {
             const { lang } = button.dataset;
             if (lang && lang !== currentLanguage) {
                 setLanguage(lang);
+                saveLanguage(lang); // Persist selection
             }
         });
     });
@@ -1318,8 +1333,28 @@ function setupSubscriptionForm() {
     });
 }
 
+const LANG_KEY = 'tracker-language';
+
+function loadLanguage() {
+    try {
+        const stored = window.localStorage.getItem(LANG_KEY);
+        return stored && translations[stored] ? stored : 'zh';
+    } catch (e) {
+        console.warn('LocalStorage access failed:', e);
+        return 'zh';
+    }
+}
+
+function saveLanguage(lang) {
+    try {
+        window.localStorage.setItem(LANG_KEY, lang);
+    } catch (e) {
+        console.warn('LocalStorage access failed:', e);
+    }
+}
+
 function init() {
-    const metrics = [
+    state.metrics = [
         {
             id: 'mag7Strategy',
             cagr: calcCagr(series.mag7Strategy),
@@ -1343,8 +1378,7 @@ function init() {
         }
     ];
 
-    state.metrics = metrics;
-    state.metricsById = metrics.reduce((acc, metric) => {
+    state.metricsById = state.metrics.reduce((acc, metric) => {
         acc[metric.id] = metric;
         return acc;
     }, {});
@@ -1362,6 +1396,8 @@ function init() {
         mag7Drawdown: formatPercent(state.metricsById.mag7Strategy.maxDrawdown, { digits: 1 }),
         mag7Excess: formatPercent(mag7TotalReturn - spTotalReturn, { sign: true })
     };
+
+    currentLanguage = loadLanguage(); // Load saved language
 
     setupLanguageSwitcher();
     setupInvestmentPlanner();
