@@ -193,7 +193,7 @@ function initEventListeners() {
     }
 
     if (savePreferencesButton) {
-        savePreferencesButton.addEventListener('click', () => {
+        savePreferencesButton.addEventListener('click', async () => {
             settings.observationMonths = parseInt(observationInput.value, 10);
             settings.dropThreshold = parseInt(thresholdInput.value, 10);
             settings.email.toEmail = emailInput.value.trim();
@@ -201,7 +201,7 @@ function initEventListeners() {
             settings.email.templateId = templateIdInput.value.trim();
             settings.email.publicKey = publicKeyInput.value.trim();
             saveSettings();
-            showStatus(translations[currentLang].status.saved, 'success');
+            await sendWelcomeEmail();
             renderChart(); // threshold/months might change
         });
     }
@@ -458,11 +458,6 @@ async function updateTicker(symbol) {
     } else {
         tickers.push(newTicker);
     }
-    if (existingIndex >= 0) {
-        tickers[existingIndex] = newTicker;
-    } else {
-        tickers.push(newTicker);
-    }
     saveTickers();
     checkAlerts(newTicker);
 }
@@ -509,6 +504,34 @@ async function checkAlerts(ticker) {
             console.error('Failed to send email alert:', e);
             showStatus('Failed to send email alert.', 'error');
         }
+    }
+}
+
+async function sendWelcomeEmail() {
+    const { email, observationMonths, dropThreshold } = settings;
+
+    if (!email.toEmail) {
+        return;
+    }
+
+    const params = {
+        to_email: email.toEmail,
+        observation_months: observationMonths,
+        threshold: dropThreshold,
+        message: `Welcome to Strategy Lab! Your drop monitor is active.\n\nSettings:\n- Observation Window: ${observationMonths} months\n- Drop Threshold: ${dropThreshold}%\n\nYou will receive an alert if any of your tracked stocks drop by more than ${dropThreshold}% from their high in the last ${observationMonths} months.`
+    };
+
+    try {
+        if (email.serviceId && email.templateId && email.publicKey && window.emailjs) {
+            await emailjs.send(email.serviceId, email.templateId, params);
+            showStatus('Settings saved & Welcome Email sent!', 'success');
+        } else {
+            console.log('Simulating Welcome Email:', params);
+            showStatus('Settings saved. (Welcome Email Simulated)', 'success');
+        }
+    } catch (e) {
+        console.error('Failed to send welcome email:', e);
+        showStatus('Settings saved, but failed to send email.', 'error');
     }
 }
 
