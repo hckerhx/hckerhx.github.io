@@ -1,0 +1,10 @@
+# Jekyll configuration
+# Preventing venv and other folders from being processed by Jekyll
+exclude:
+  - venv
+  - .vercel
+  - node_modules
+  - .python-version
+  - .env
+  - README.md
+  - .gitignore
