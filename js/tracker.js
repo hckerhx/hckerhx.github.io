@@ -4,8 +4,10 @@ const LANG_KEY = 'tracker-language';
 
 const ALERT_COOLDOWN_DAYS = 3;
 const REFRESH_INTERVAL_MINUTES = 30;
-const DEFAULT_OBSERVATION_MONTHS = 2;
+const DEFAULT_OBSERVATION_MONTHS = 6;
 const DEFAULT_DROP_THRESHOLD = 20;
+
+const M7_TICKERS = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA'];
 
 const translations = {
     zh: {
@@ -103,12 +105,27 @@ init();
 function init() {
     applyLanguage(currentLang);
     renderSettings();
+
+    // Automatically add M7 tickers if they are not already in the list
+    let addedAny = false;
+    M7_TICKERS.forEach(symbol => {
+        if (!tickers.some(t => t.symbol === symbol)) {
+            tickers.push({ symbol, history: [], latestPrice: 0, dropPercent: 0 });
+            addedAny = true;
+        }
+    });
+    if (addedAny) saveTickers();
+
     renderTickerTags();
-    if (activeSymbol) {
+    if (activeSymbol || tickers.length > 0) {
+        if (!activeSymbol) activeSymbol = tickers[0].symbol;
         renderChart();
     }
     initEmailJS();
     initEventListeners();
+
+    // Refresh data for all tickers to ensure accuracy
+    refreshAllTickers();
 
     // Remove loading class after init to prevent flash
     document.body.classList.remove('js-loading');
@@ -133,8 +150,16 @@ function loadSettings() {
     try {
         const raw = window.localStorage.getItem(SETTINGS_KEY);
         const parsed = raw ? JSON.parse(raw) : {};
+
+        // If the user had the old default (2), migrate it to the new default (6)
+        // or if no value is present, use the new default.
+        let observationMonths = parsed.observationMonths;
+        if (observationMonths === undefined || observationMonths === 2) {
+            observationMonths = DEFAULT_OBSERVATION_MONTHS;
+        }
+
         return {
-            observationMonths: parsed.observationMonths || DEFAULT_OBSERVATION_MONTHS,
+            observationMonths: observationMonths,
             dropThreshold: parsed.dropThreshold || DEFAULT_DROP_THRESHOLD,
             email: {
                 serviceId: parsed.email?.serviceId || '',
@@ -437,9 +462,15 @@ async function updateTicker(symbol) {
 
     const latestPrice = history[history.length - 1].close;
 
-    // Calculate Drop from 1-Year High (or window high)
-    // We use the full fetched history (1 year) for the "Highest" reference usually
-    const maxPrice = Math.max(...history.map(h => h.close));
+    // Calculate Drop from sliding window high
+    const windowMonths = settings.observationMonths;
+    const cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() - windowMonths);
+
+    const windowHistory = history.filter(h => new Date(h.date) >= cutoffDate);
+    const referenceHistory = windowHistory.length > 0 ? windowHistory : history;
+
+    const maxPrice = Math.max(...referenceHistory.map(h => h.close));
     const dropPercent = ((maxPrice - latestPrice) / maxPrice) * 100;
 
     const now = new Date();
