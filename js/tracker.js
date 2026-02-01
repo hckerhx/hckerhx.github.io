@@ -274,7 +274,9 @@ async function addTicker(inputVal) {
     if (!symbol) return;
 
     if (tickers.some(t => t.symbol === symbol)) {
-        showStatus(translations[currentLang].status.duplicate(symbol), 'error');
+        activeSymbol = symbol;
+        renderTickerTags();
+        renderChart();
         newTickerInput.value = '';
         return;
     }
