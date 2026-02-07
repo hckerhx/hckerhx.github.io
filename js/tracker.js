@@ -417,7 +417,7 @@ async function fetchStockHistory(symbol) {
     // Note: In a production backend, you would proxy this yourself.
     const symbolClean = symbol.toUpperCase().replace(/\.HK$/, ''); // Handle HK suffix if needed, though YF uses .HK
     const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1d`;
-    const url = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+    const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`Yahoo API limit or network error: ${response.status}`);

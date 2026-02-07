@@ -26,7 +26,7 @@ python -m http.server 8000
 ### Two-Page Structure
 
 - **index.html + tracker.js** - Real-time drawdown monitor
-  - Fetches live stock data from Yahoo Finance API (via CORS proxy corsproxy.io)
+  - Fetches live stock data from Yahoo Finance API (via CORS proxy api.allorigins.win)
   - Renders price charts with Chart.js
   - Triggers email alerts via EmailJS when drawdown thresholds are hit
 
@@ -50,7 +50,7 @@ python -m http.server 8000
 **API Calls:** Yahoo Finance via CORS proxy
 ```javascript
 // Pattern used throughout
-const url = `https://corsproxy.io/?${encodeURIComponent(yahooUrl)}`;
+const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(yahooUrl)}`;
 ```
 
 **UI Style:** Excalidraw-inspired handwritten aesthetic using Patrick Hand font and irregular border-radius values for sketchy appearance.
