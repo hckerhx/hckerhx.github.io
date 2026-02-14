@@ -17,7 +17,7 @@ const translations = {
         panel: { title: '下跌监控', locale: '简单直观的策略辅助工具' },
         ticker: { placeholder: '输入代码 (如 AAPL)', example: '支持美股与港股' },
         controls: { observationTitle: '观测时间 (月)', thresholdTitle: '买入阈值 (%)', emailLabel: '提醒邮箱' },
-        buttons: { save: '保存设置', refreshAll: '刷新数据' },
+        buttons: { save: '保存设置', refreshAll: '刷新数据', showSettings: '显示更多设置', hideSettings: '隐藏设置' },
         status: {
             saved: '已保存设置。',
             batchStart: '正在刷新...',
@@ -46,7 +46,7 @@ const translations = {
         panel: { title: 'Drawdown Monitor', locale: 'Simple Strategy Tool' },
         ticker: { placeholder: 'Enter Ticker (e.g. AAPL)', example: 'Supports US & HK Stocks' },
         controls: { observationTitle: 'Lookback (Months)', thresholdTitle: 'Threshold (%)', emailLabel: 'Alert Email' },
-        buttons: { save: 'Save Settings', refreshAll: 'Refresh Data' },
+        buttons: { save: 'Save Settings', refreshAll: 'Refresh Data', showSettings: 'Show Settings', hideSettings: 'Hide Settings' },
         status: {
             saved: 'Settings saved.',
             batchStart: 'Refreshing...',
@@ -92,6 +92,8 @@ const chartPlaceholder = document.getElementById('chartPlaceholder');
 const serviceIdInput = document.getElementById('serviceId');
 const templateIdInput = document.getElementById('templateId');
 const publicKeyInput = document.getElementById('publicKey');
+const toggleSettingsBtn = document.getElementById('toggleSettings');
+const settingsPanel = document.getElementById('settingsPanel');
 
 // State
 let currentLang = loadLanguage();
@@ -234,6 +236,16 @@ function initEventListeners() {
     if (refreshAllButton) {
         refreshAllButton.addEventListener('click', refreshAllTickers);
     }
+
+    if (toggleSettingsBtn && settingsPanel) {
+        toggleSettingsBtn.addEventListener('click', () => {
+            settingsPanel.classList.toggle('open');
+            const t = translations[currentLang];
+            toggleSettingsBtn.textContent = settingsPanel.classList.contains('open')
+                ? t.buttons.hideSettings
+                : t.buttons.showSettings;
+        });
+    }
 }
 
 function applyLanguage(lang) {
@@ -256,6 +268,12 @@ function applyLanguage(lang) {
 
     savePreferencesButton.textContent = t.buttons.save;
     refreshAllButton.textContent = t.buttons.refreshAll;
+
+    if (toggleSettingsBtn && settingsPanel) {
+        toggleSettingsBtn.textContent = settingsPanel.classList.contains('open')
+            ? t.buttons.hideSettings
+            : t.buttons.showSettings;
+    }
 }
 
 function renderSettings() {

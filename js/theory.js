@@ -743,7 +743,8 @@ function renderLiveSection(lang) {
 
 async function loadLiveQuotes() {
     try {
-        const url = `${yahooConfig.endpoint}?symbols=${yahooConfig.symbols.join(',')}`;
+        const targetUrl = `${yahooConfig.endpoint}?symbols=${yahooConfig.symbols.join(',')}`;
+        const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -1401,8 +1402,6 @@ function init() {
 
     setupLanguageSwitcher();
     setupInvestmentPlanner();
-    setupSubscriptionForm();
-    setLanguage(currentLanguage);
     setupSubscriptionForm();
     setLanguage(currentLanguage);
     startLiveRefresh();

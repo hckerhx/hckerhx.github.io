@@ -31,6 +31,7 @@
             <p class="hero-subtitle" data-i18n="hero.subtitle">
                 当Mag 7 科技龙头因宏观或财报事件急跌超过20%时逆向加仓，持有2-3年，并与长期定投 S&P 500 与 QQQ 的表现进行对比，同时跟踪实时组合净值。
             </p>
+            <div id="heroMetrics" style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center; margin-top:2rem;"></div>
         </div>
     </header>
 
@@ -71,13 +72,24 @@
                     style="padding:0.5rem; font-family:var(--font-hand); font-size:1.1rem; border:2px solid #1e1e1e; border-radius:5px;">
                 <button type="submit" class="button" data-i18n="investment.submit">生成操作建议</button>
             </form>
+            <p id="investmentHelper" style="margin-top:0.5rem; font-size:0.85rem; opacity:0.6;"></p>
+            <p id="planError" style="margin-top:0.5rem; color:var(--accent-strong);"></p>
+            <p id="planSummary" style="margin-top:1rem; font-weight:bold;"></p>
 
             <div id="planResults" style="margin-top:2rem;"></div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="theory-content" style="margin-top:3rem;">
+            <h2 data-i18n="sections.timelineTitle">Mag 7 策略操作时间线</h2>
+            <p data-i18n="sections.timelineIntro" style="margin-bottom:1.5rem;">追踪每次深跌买入的触发背景、加仓节奏与持有结果，理解策略在不同宏观周期下的执行细节。</p>
+            <div id="timeline"></div>
         </section>
 
         <!-- Live Metrics -->
         <section class="section" style="margin-top:3rem;">
             <h2 style="text-align:center; margin-bottom:2rem;" data-i18n="sections.liveTitle">实时组合净值对比</h2>
+            <p style="text-align:center; opacity:0.8; margin-bottom:1.5rem;" data-i18n="sections.liveIntro">通过接入 Yahoo Finance API，等权跟踪 Mag 7 组合，并与 SPY、QQQ 的日内表现进行实时比较。</p>
             <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center;">
 
                 <div class="card"
@@ -103,6 +115,47 @@
 
             </div>
             <p style="text-align:center; margin-top:1rem; font-size:0.8rem; opacity:0.6;" id="liveUpdated"></p>
+            <p style="text-align:center; margin-top:0.5rem; color:var(--accent-strong);" id="liveError"></p>
+        </section>
+
+        <!-- Metrics Comparison -->
+        <section class="theory-content" style="margin-top:3rem;">
+            <h2 data-i18n="sections.metricsTitle">核心指标对比</h2>
+            <p data-i18n="sections.metricsIntro" style="margin-bottom:1.5rem;">通过CAGR、最大回撤与收益稳定性，观察策略在不同资产池的风险收益特征，并与被动定投方案形成直观对照。</p>
+            <table style="width:100%; border-collapse:collapse; margin-bottom:2rem;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left; padding:0.5rem; border-bottom:2px solid #1e1e1e;" data-i18n="table.headers.strategy">策略</th>
+                        <th style="text-align:left; padding:0.5rem; border-bottom:2px solid #1e1e1e;" data-i18n="table.headers.cagr">CAGR</th>
+                        <th style="text-align:left; padding:0.5rem; border-bottom:2px solid #1e1e1e;" data-i18n="table.headers.maxDrawdown">最大回撤</th>
+                        <th style="text-align:left; padding:0.5rem; border-bottom:2px solid #1e1e1e;" data-i18n="table.headers.tenYear">十年总收益</th>
+                        <th style="text-align:left; padding:0.5rem; border-bottom:2px solid #1e1e1e;" data-i18n="table.headers.triggers">触发次数</th>
+                    </tr>
+                </thead>
+                <tbody id="metricsTableBody"></tbody>
+            </table>
+            <div style="height:400px; position:relative;">
+                <canvas id="metricsChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Insights -->
+        <section class="theory-content" style="margin-top:3rem;">
+            <h2 data-i18n="sections.insightsTitle">策略洞察</h2>
+            <div id="insights"></div>
+        </section>
+
+        <!-- Email Subscription -->
+        <section class="theory-content" style="margin-top:3rem;">
+            <h2 data-i18n="subscription.title">邮件提醒订阅</h2>
+            <p data-i18n="subscription.intro">留下邮箱，当策略再次触发深跌买入信号或组合出现显著波动时即时接收提醒。</p>
+            <form id="subscriptionForm" style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+                <label for="subscriptionEmail" style="font-weight:bold;" data-i18n="subscription.emailLabel">邮箱地址</label>
+                <input type="email" id="subscriptionEmail" placeholder="you@example.com"
+                    style="padding:0.5rem; font-family:var(--font-hand); font-size:1.1rem; border:2px solid #1e1e1e; border-radius:5px; min-width:200px;">
+                <button type="submit" class="button" data-i18n="subscription.submit">订阅提醒</button>
+            </form>
+            <p id="subscriptionMessage" style="margin-top:0.5rem;"></p>
         </section>
 
     </main>

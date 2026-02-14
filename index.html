@@ -8,10 +8,9 @@
     <!-- Handwritten Font -->
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 
 <body class="js-loading">
@@ -114,15 +113,6 @@
         </div>
     </footer>
 
-    <!-- Minimal script to handle the toggle view, rest handled by tracker.js -->
-    <script>
-        document.getElementById('toggleSettings').addEventListener('click', function () {
-            document.getElementById('settingsPanel').classList.toggle('open');
-            this.textContent = document.getElementById('settingsPanel').classList.contains('open')
-                ? '隐藏设置'
-                : '显示更多设置';
-        });
-    </script>
     <script src="js/tracker.js"></script>
 </body>
 
