@@ -444,28 +444,33 @@ function renderChart() {
 
 // --- Real Yahoo Finance API Logic ---
 
-async function fetchStockHistory(symbol) {
-    // Yahoo Finance Chart API (public endpoint)
-    // We request 1 year of data with daily intervals
-    // Use a CORS proxy to bypass browser restrictions
-    // Note: In a production backend, you would proxy this yourself.
-    const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1d`;
-    const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+async function fetchJSON(url) {
     const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`Yahoo API limit or network error: ${response.status}`);
+    const text = await response.text();
+    if (!response.ok || text.trimStart().startsWith('<')) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+    return JSON.parse(text);
+}
+
+async function fetchStockHistory(symbol) {
+    let json;
+    // Use own Vercel API route; fall back to CORS proxy for local dev
+    try {
+        json = await fetchJSON(`/api/yahoo?symbol=${symbol}&range=1y&interval=1d`);
+    } catch {
+        const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1d`;
+        json = await fetchJSON(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
     }
 
-    const json = await response.json();
-    const result = json.chart.result[0];
+    const result = json.chart?.result?.[0];
 
-    if (!result || !result.timestamp || !result.indicators.quote[0]) {
+    if (!result || !result.timestamp || !result.indicators?.quote?.[0]) {
         throw new Error('Invalid data structure from Yahoo');
     }
 
     const timestamps = result.timestamp;
-    const quotes = result.indicators.quote[0];
-    const closes = quotes.close;
+    const closes = result.indicators.quote[0].close;
 
     const history = [];
     for (let i = 0; i < timestamps.length; i++) {
