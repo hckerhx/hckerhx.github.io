@@ -4,10 +4,8 @@
 
 ## 📸 界面预览
 
-![Stock Chart](file:///Users/hckerhx/.gemini/antigravity/brain/325487e6-f338-4714-a5ab-c7c3776e2f20/aapl_chart_final_1767825382174.png)
 *实时股价走势监控 (Excalidraw 风格)*
 
-![Theory Page](file:///Users/hckerhx/.gemini/antigravity/brain/325487e6-f338-4714-a5ab-c7c3776e2f20/theory_page_en_1767827206340.png)
 *策略理论页 (英文模式)*
 
 ## 🌐 核心功能

@@ -3,7 +3,6 @@ const TICKERS_KEY = 'tracker-tickers';
 const LANG_KEY = 'tracker-language';
 
 const ALERT_COOLDOWN_DAYS = 3;
-const REFRESH_INTERVAL_MINUTES = 30;
 const DEFAULT_OBSERVATION_MONTHS = 6;
 const DEFAULT_DROP_THRESHOLD = 20;
 
@@ -36,7 +35,8 @@ const translations = {
             title: symbol => `${symbol} 价格走势`,
             subtitle: (months, threshold) => `近 ${months} 个月 · 阈值 ${threshold}%`,
             placeholder: '输入代码或点击下方标签查看走势',
-            noData: '暂无数据'
+            noData: '暂无数据',
+            tooltipPrice: '价格'
         }
     },
     en: {
@@ -65,7 +65,8 @@ const translations = {
             title: symbol => `${symbol} Price Trend`,
             subtitle: (months, threshold) => `${months} Mo Lookback · ${threshold}% Threshold`,
             placeholder: 'Enter ticker or click tag to view',
-            noData: 'No Data'
+            noData: 'No Data',
+            tooltipPrice: 'Price'
         }
     }
 };
@@ -287,9 +288,20 @@ function renderSettings() {
 
 // --- Ticker Logic ---
 
+function isValidTicker(symbol) {
+    // US stocks: 1-5 uppercase letters, optionally with a dot (e.g. BRK.B)
+    // HK stocks: digits followed by .HK (e.g. 0700.HK)
+    return /^[A-Z]{1,5}(\.[A-Z])?$/.test(symbol) || /^\d{1,5}\.HK$/.test(symbol);
+}
+
 async function addTicker(inputVal) {
     const symbol = inputVal.trim().toUpperCase();
     if (!symbol) return;
+
+    if (!isValidTicker(symbol)) {
+        showStatus(translations[currentLang].status.invalidSymbol, 'error');
+        return;
+    }
 
     if (tickers.some(t => t.symbol === symbol)) {
         activeSymbol = symbol;
@@ -319,7 +331,11 @@ function renderTickerTags() {
     tickers.forEach(t => {
         const tag = document.createElement('div');
         tag.className = `history-tag ${t.symbol === activeSymbol ? 'active' : ''}`;
-        tag.innerHTML = `${t.symbol} <span class="remove-btn">×</span>`; // using innerHTML for simplicity
+        tag.textContent = t.symbol + ' ';
+        const removeBtn = document.createElement('span');
+        removeBtn.className = 'remove-btn';
+        removeBtn.textContent = '×';
+        tag.appendChild(removeBtn);
 
         // Tag Click -> Select
         tag.addEventListener('click', (e) => {
@@ -433,7 +449,6 @@ async function fetchStockHistory(symbol) {
     // We request 1 year of data with daily intervals
     // Use a CORS proxy to bypass browser restrictions
     // Note: In a production backend, you would proxy this yourself.
-    const symbolClean = symbol.toUpperCase().replace(/\.HK$/, ''); // Handle HK suffix if needed, though YF uses .HK
     const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1d`;
     const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
     const response = await fetch(url);
@@ -562,6 +577,7 @@ async function sendWelcomeEmail() {
     const { email, observationMonths, dropThreshold } = settings;
 
     if (!email.toEmail) {
+        showStatus(translations[currentLang].status.saved, 'success');
         return;
     }
 
@@ -591,7 +607,9 @@ async function refreshAllTickers() {
     for (const t of tickers) {
         try {
             await updateTicker(t.symbol);
-        } catch { }
+        } catch (err) {
+            console.warn(`Failed to update ${t.symbol}:`, err.message);
+        }
     }
     saveTickers();
     renderTickerTags();
