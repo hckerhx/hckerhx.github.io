@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Tactical Drawdown Strategy Lab - a bilingual (Chinese/English) static web application for visualizing "buy-the-dip" investment strategies focused on Mag 7 tech stocks. Features real-time drawdown monitoring, Chart.js visualizations, and email alerts via EmailJS.
+Tactical Drawdown Strategy Lab - a bilingual (Chinese/English) static web application for visualizing "buy-the-dip" investment strategies focused on Mag 7 tech stocks. Features real-time drawdown monitoring, Chart.js visualizations, and email alerts via Resend (Vercel serverless).
 
 ## Development
 
@@ -40,7 +40,7 @@ const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(
 ```
 
 **State Management:** All state in localStorage under these keys:
-- `tracker-settings` - Observation months, drop threshold, EmailJS credentials
+- `tracker-settings` - Observation months, drop threshold, alert email address
 - `tracker-tickers` - Array of tracked symbols with history/price data
 - `tracker-language` - Language preference (`zh`/`en`), defaults to `zh`
 
@@ -55,7 +55,6 @@ const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(
 ```javascript
 // tracker.js
 ALERT_COOLDOWN_DAYS = 3        // Email spam prevention
-REFRESH_INTERVAL_MINUTES = 30  // Live data refresh
 DEFAULT_OBSERVATION_MONTHS = 6
 DEFAULT_DROP_THRESHOLD = 20    // Drawdown percentage trigger
 M7_TICKERS = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA']
@@ -67,5 +66,11 @@ yahooConfig.refreshMs = 5 * 60 * 1000  // Live quote refresh (5 min)
 ### External Dependencies (CDN only)
 
 - Chart.js + chartjs-adapter-date-fns (charting)
-- EmailJS SDK (email alerts, index.html only)
 - Patrick Hand font (Google Fonts)
+
+### Vercel Serverless API Routes
+
+| Route | Purpose |
+|---|---|
+| `/api/yahoo.js` | Proxies Yahoo Finance API requests |
+| `/api/send-alert.js` | Sends email alerts via Resend API (requires `RESEND_API_KEY` env var) |

@@ -90,9 +90,6 @@ const chartTitleEl = document.getElementById('chartTitle');
 const chartSubtitleEl = document.getElementById('chartSubtitle');
 const priceChartCanvas = document.getElementById('priceChart');
 const chartPlaceholder = document.getElementById('chartPlaceholder');
-const serviceIdInput = document.getElementById('serviceId');
-const templateIdInput = document.getElementById('templateId');
-const publicKeyInput = document.getElementById('publicKey');
 const toggleSettingsBtn = document.getElementById('toggleSettings');
 const settingsPanel = document.getElementById('settingsPanel');
 
@@ -124,7 +121,6 @@ function init() {
         if (!activeSymbol) activeSymbol = tickers[0].symbol;
         renderChart();
     }
-    initEmailJS();
     initEventListeners();
 
     // Refresh data for all tickers to ensure accuracy
@@ -132,12 +128,6 @@ function init() {
 
     // Remove loading class after init to prevent flash
     document.body.classList.remove('js-loading');
-}
-
-function initEmailJS() {
-    if (settings.email.publicKey && window.emailjs) {
-        emailjs.init(settings.email.publicKey);
-    }
 }
 
 function loadLanguage() {
@@ -165,9 +155,6 @@ function loadSettings() {
             observationMonths: observationMonths,
             dropThreshold: parsed.dropThreshold || DEFAULT_DROP_THRESHOLD,
             email: {
-                serviceId: parsed.email?.serviceId || '',
-                templateId: parsed.email?.templateId || '',
-                publicKey: parsed.email?.publicKey || '',
                 toEmail: parsed.email?.toEmail || ''
             }
         };
@@ -175,7 +162,7 @@ function loadSettings() {
         return {
             observationMonths: DEFAULT_OBSERVATION_MONTHS,
             dropThreshold: DEFAULT_DROP_THRESHOLD,
-            email: { serviceId: '', templateId: '', publicKey: '', toEmail: '' }
+            email: { toEmail: '' }
         };
     }
 }
@@ -225,9 +212,6 @@ function initEventListeners() {
             settings.observationMonths = parseInt(observationInput.value, 10);
             settings.dropThreshold = parseInt(thresholdInput.value, 10);
             settings.email.toEmail = emailInput.value.trim();
-            settings.email.serviceId = serviceIdInput.value.trim();
-            settings.email.templateId = templateIdInput.value.trim();
-            settings.email.publicKey = publicKeyInput.value.trim();
             saveSettings();
             await sendWelcomeEmail();
             renderChart(); // threshold/months might change
@@ -281,9 +265,6 @@ function renderSettings() {
     observationInput.value = settings.observationMonths;
     thresholdInput.value = settings.dropThreshold;
     emailInput.value = settings.email.toEmail;
-    serviceIdInput.value = settings.email.serviceId;
-    templateIdInput.value = settings.email.templateId;
-    publicKeyInput.value = settings.email.publicKey;
 }
 
 // --- Ticker Logic ---
@@ -533,48 +514,61 @@ async function updateTicker(symbol) {
     checkAlerts(newTicker);
 }
 
+// Detect if we're running on Vercel (has /api routes available)
+function hasServerAPI() {
+    return location.hostname !== '' && !location.protocol.startsWith('file');
+}
+
+async function sendAlertAPI(payload) {
+    if (!hasServerAPI()) {
+        console.log('[Dev Mode] Email simulated:', payload);
+        return { simulated: true };
+    }
+    const res = await fetch('/api/send-alert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Send failed');
+    return data;
+}
+
 async function checkAlerts(ticker) {
     const { dropThreshold, email } = settings;
-    // Check if drop exceeds threshold
-    if (ticker.dropPercent >= dropThreshold) {
-        // Check cooldown (prevent spam)
-        const now = new Date();
-        const lastAlert = ticker.lastAlert ? new Date(ticker.lastAlert) : null;
+    if (ticker.dropPercent < dropThreshold) return;
+    if (!email.toEmail) return;
 
-        // Cooldown check (e.g., 3 days)
-        if (lastAlert && (now - lastAlert) < (ALERT_COOLDOWN_DAYS * 24 * 60 * 60 * 1000)) {
-            console.log(`Alert suppressed for ${ticker.symbol}: cooldown active.`);
-            return;
-        }
+    // Cooldown check (3 days)
+    const now = new Date();
+    const lastAlert = ticker.lastAlert ? new Date(ticker.lastAlert) : null;
+    if (lastAlert && (now - lastAlert) < (ALERT_COOLDOWN_DAYS * 24 * 60 * 60 * 1000)) {
+        console.log(`Alert suppressed for ${ticker.symbol}: cooldown active.`);
+        return;
+    }
 
-        // Prepare email params
-        const params = {
+    try {
+        const result = await sendAlertAPI({
+            type: 'alert',
+            to_email: email.toEmail,
             symbol: ticker.symbol,
             price: ticker.latestPrice.toFixed(2),
             drop_percent: ticker.dropPercent.toFixed(2),
             threshold: dropThreshold,
-            to_email: email.toEmail
-        };
+            observation_months: settings.observationMonths
+        });
 
-        // Try to send email
-        try {
-            if (email.serviceId && email.templateId && email.publicKey && window.emailjs) {
-                await emailjs.send(email.serviceId, email.templateId, params);
-                showStatus(`📧 Email alert sent for ${ticker.symbol}!`, 'success');
-            } else {
-                // Simulation Mode
-                console.log('Simulating Email Alert:', params);
-                showStatus(`📧 [TEST] Alert triggered for ${ticker.symbol} (Simulation)`, 'success');
-            }
-
-            // Update last alert time
-            ticker.lastAlert = now.toISOString();
-            saveTickers();
-
-        } catch (e) {
-            console.error('Failed to send email alert:', e);
-            showStatus('Failed to send email alert.', 'error');
+        if (result.simulated) {
+            showStatus(`[TEST] Alert triggered for ${ticker.symbol} (Simulation)`, 'success');
+        } else {
+            showStatus(`Email alert sent for ${ticker.symbol}!`, 'success');
         }
+
+        ticker.lastAlert = now.toISOString();
+        saveTickers();
+    } catch (e) {
+        console.error('Failed to send email alert:', e);
+        showStatus('Failed to send email alert.', 'error');
     }
 }
 
@@ -586,20 +580,18 @@ async function sendWelcomeEmail() {
         return;
     }
 
-    const params = {
-        to_email: email.toEmail,
-        observation_months: observationMonths,
-        threshold: dropThreshold,
-        message: `Welcome to Strategy Lab! Your drop monitor is active.\n\nSettings:\n- Observation Window: ${observationMonths} months\n- Drop Threshold: ${dropThreshold}%\n\nYou will receive an alert if any of your tracked stocks drop by more than ${dropThreshold}% from their high in the last ${observationMonths} months.`
-    };
-
     try {
-        if (email.serviceId && email.templateId && email.publicKey && window.emailjs) {
-            await emailjs.send(email.serviceId, email.templateId, params);
-            showStatus('Settings saved & Welcome Email sent!', 'success');
-        } else {
-            console.log('Simulating Welcome Email:', params);
+        const result = await sendAlertAPI({
+            type: 'welcome',
+            to_email: email.toEmail,
+            observation_months: observationMonths,
+            threshold: dropThreshold
+        });
+
+        if (result.simulated) {
             showStatus('Settings saved. (Welcome Email Simulated)', 'success');
+        } else {
+            showStatus('Settings saved & Welcome Email sent!', 'success');
         }
     } catch (e) {
         console.error('Failed to send welcome email:', e);
