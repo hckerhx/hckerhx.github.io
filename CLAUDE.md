@@ -8,12 +8,23 @@ Tactical Drawdown Strategy Lab - a bilingual (Chinese/English) static web applic
 
 ## Development
 
-Zero-build static site. No npm, no bundler, no build step.
+Zero-build static site. No bundler, no build step. Has `package.json` only for the QA test runner (`puppeteer-core`).
+
+### Local Run Modes
+
+| Mode | Command | Email API | Yahoo API |
+|---|---|---|---|
+| Static (file) | `open index.html` | Simulated (console) | CORS proxy only |
+| Static (HTTP) | `python -m http.server 8000` | Simulated (console) | CORS proxy only |
+| Full Vercel | `vercel dev` | Live (Resend) | `/api/yahoo` + CORS proxy fallback |
+
+### QA Test Runner
 
 ```bash
-open index.html                # or
-python -m http.server 8000     # for CORS proxy to work properly
+CHROME_PATH=/path/to/chrome node test-agent.mjs   # Puppeteer-based automated QA
 ```
+
+Requires `puppeteer-core` (`npm install`) and Chrome/Chromium. Set `CHROME_PATH` env var if Chrome is not at the default macOS location.
 
 **Deployment:** Push to `main` deploys via Vercel. The repo also has GitHub Pages configured (hckerhx.github.io).
 
@@ -30,13 +41,10 @@ python -m http.server 8000     # for CORS proxy to work properly
 
 ### Key Patterns
 
-**CORS Proxy:** Both pages use `api.allorigins.win` to bypass CORS for Yahoo Finance API.
+**Data Fetching:** Both pages try the first-party Vercel `/api/yahoo` route first, then fall back to `api.allorigins.win` CORS proxy for local dev.
 ```javascript
-// tracker.js uses v8/chart endpoint for historical data
-const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(
-  `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1d`
-)}`;
-// theory.js uses v7/quote endpoint for live quotes (without proxy currently)
+// tracker.js: /api/yahoo -> allorigins fallback (v8/chart, historical data)
+// theory.js: allorigins proxy (v7/quote, live quotes)
 ```
 
 **State Management:** All state in localStorage under these keys:
@@ -74,3 +82,17 @@ yahooConfig.refreshMs = 5 * 60 * 1000  // Live quote refresh (5 min)
 |---|---|
 | `/api/yahoo.js` | Proxies Yahoo Finance API requests |
 | `/api/send-alert.js` | Sends email alerts via Resend API (requires `RESEND_API_KEY` env var) |
+
+### Email (Resend) Gotchas
+
+- **`from` address uses `onboarding@resend.dev`** (Resend test domain) — can ONLY deliver to the account owner's email (`hangzuoxiang@gmail.com`). Sending to other recipients returns 403. To send to arbitrary addresses, verify a custom domain at resend.com/domains and update the `from` field in `api/send-alert.js`.
+- **Test endpoint:** `curl -X POST https://sdmr-liard-zeta.vercel.app/api/send-alert -H "Content-Type: application/json" -d '{"type":"welcome","to_email":"hangzuoxiang@gmail.com","observation_months":6,"threshold":20}'`
+- **Alert cooldown:** 3-day per-ticker cooldown in `checkAlerts()` — alerts are silently suppressed during cooldown.
+
+## Guardrails
+
+**i18n:** Every user-facing string must go in the `translations` object (`zh`/`en`). No hardcoded UI text in HTML or JS. Both pages share the same `tracker-language` localStorage key.
+
+**Security:** Do not add new third-party data proxies in production paths; prefer first-party `/api/yahoo` Vercel route. The email API (`/api/send-alert`) must validate all inputs server-side (symbol format, numeric ranges, email format) and check `Origin`/`Referer` headers.
+
+**API Detection:** `hasServerAPI()` in `tracker.js` must only return `true` when the Vercel API is actually available (currently checks known Vercel hostnames). Do not assume all HTTP hosts have `/api` routes.

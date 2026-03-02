@@ -58,6 +58,14 @@ export default async function handler(req, res) {
         return res.status(429).json({ error: 'Rate limit exceeded. Try again later.' });
     }
 
+    // Origin check — only allow requests from known deployments
+    const origin = req.headers['origin'] || req.headers['referer'] || '';
+    const allowedOrigins = ['sdmr-liard-zeta.vercel.app', 'localhost', '127.0.0.1'];
+    const isAllowedOrigin = allowedOrigins.some(o => origin.includes(o));
+    if (origin && !isAllowedOrigin) {
+        return res.status(403).json({ error: 'Forbidden origin' });
+    }
+
     const { type, to_email, symbol, price, drop_percent, threshold, observation_months } = req.body || {};
 
     // Validate required fields
@@ -72,6 +80,29 @@ export default async function handler(req, res) {
     }
     if (type === 'alert' && (!symbol || !price || !drop_percent)) {
         return res.status(400).json({ error: 'Alert type requires: symbol, price, drop_percent' });
+    }
+
+    // Validate symbol format (US: 1-5 uppercase letters; HK: digits.HK)
+    if (type === 'alert' && !/^[A-Z]{1,5}(\.[A-Z])?$/.test(symbol) && !/^\d{1,5}\.HK$/.test(symbol)) {
+        return res.status(400).json({ error: 'Invalid symbol format' });
+    }
+
+    // Validate numeric ranges
+    const numPrice = Number(price);
+    const numDrop = Number(drop_percent);
+    const numThreshold = Number(threshold);
+    const numMonths = Number(observation_months);
+    if (type === 'alert' && (isNaN(numPrice) || numPrice <= 0 || numPrice > 1e6)) {
+        return res.status(400).json({ error: 'Invalid price value' });
+    }
+    if (type === 'alert' && (isNaN(numDrop) || numDrop < 0 || numDrop > 100)) {
+        return res.status(400).json({ error: 'Invalid drop_percent value' });
+    }
+    if (threshold !== undefined && (isNaN(numThreshold) || numThreshold < 1 || numThreshold > 100)) {
+        return res.status(400).json({ error: 'Invalid threshold value' });
+    }
+    if (observation_months !== undefined && (isNaN(numMonths) || numMonths < 1 || numMonths > 24)) {
+        return res.status(400).json({ error: 'Invalid observation_months value' });
     }
 
     // Build email content

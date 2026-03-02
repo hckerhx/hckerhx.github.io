@@ -37,6 +37,16 @@ const translations = {
             placeholder: '输入代码或点击下方标签查看走势',
             noData: '暂无数据',
             tooltipPrice: '价格'
+        },
+        footer: '投资有风险，本工具不构成投资建议。',
+        alerts: {
+            testTriggered: symbol => `[测试] ${symbol} 触发提醒 (模拟)`,
+            emailSent: symbol => `已发送 ${symbol} 提醒邮件！`,
+            emailFailed: '提醒邮件发送失败。',
+            settingsSaved: '设置已保存。',
+            welcomeSimulated: '设置已保存。(欢迎邮件已模拟)',
+            welcomeSent: '设置已保存，欢迎邮件已发送！',
+            welcomeFailed: '设置已保存，但邮件发送失败。'
         }
     },
     en: {
@@ -67,6 +77,16 @@ const translations = {
             placeholder: 'Enter ticker or click tag to view',
             noData: 'No Data',
             tooltipPrice: 'Price'
+        },
+        footer: 'Invest at your own risk. Not financial advice.',
+        alerts: {
+            testTriggered: symbol => `[TEST] Alert triggered for ${symbol} (Simulation)`,
+            emailSent: symbol => `Email alert sent for ${symbol}!`,
+            emailFailed: 'Failed to send email alert.',
+            settingsSaved: 'Settings saved.',
+            welcomeSimulated: 'Settings saved. (Welcome Email Simulated)',
+            welcomeSent: 'Settings saved & Welcome Email sent!',
+            welcomeFailed: 'Settings saved, but failed to send email.'
         }
     }
 };
@@ -235,6 +255,7 @@ function initEventListeners() {
 
 function applyLanguage(lang) {
     const t = translations[lang];
+    document.documentElement.lang = t.htmlLang;
     document.title = t.documentTitle;
 
     // Switcher UI
@@ -259,6 +280,9 @@ function applyLanguage(lang) {
             ? t.buttons.hideSettings
             : t.buttons.showSettings;
     }
+
+    const footerNote = document.getElementById('footerNote');
+    if (footerNote) footerNote.textContent = t.footer;
 }
 
 function renderSettings() {
@@ -516,7 +540,8 @@ async function updateTicker(symbol) {
 
 // Detect if we're running on Vercel (has /api routes available)
 function hasServerAPI() {
-    return location.hostname !== '' && !location.protocol.startsWith('file');
+    const host = location.hostname;
+    return host.endsWith('.vercel.app') || host === 'localhost' || host === '127.0.0.1';
 }
 
 async function sendAlertAPI(payload) {
@@ -558,25 +583,28 @@ async function checkAlerts(ticker) {
             observation_months: settings.observationMonths
         });
 
+        const a = translations[currentLang].alerts;
         if (result.simulated) {
-            showStatus(`[TEST] Alert triggered for ${ticker.symbol} (Simulation)`, 'success');
+            showStatus(a.testTriggered(ticker.symbol), 'success');
         } else {
-            showStatus(`Email alert sent for ${ticker.symbol}!`, 'success');
+            showStatus(a.emailSent(ticker.symbol), 'success');
         }
 
         ticker.lastAlert = now.toISOString();
         saveTickers();
     } catch (e) {
         console.error('Failed to send email alert:', e);
-        showStatus('Failed to send email alert.', 'error');
+        showStatus(translations[currentLang].alerts.emailFailed, 'error');
     }
 }
 
 async function sendWelcomeEmail() {
     const { email, observationMonths, dropThreshold } = settings;
 
+    const a = translations[currentLang].alerts;
+
     if (!email.toEmail) {
-        showStatus(translations[currentLang].status.saved, 'success');
+        showStatus(a.settingsSaved, 'success');
         return;
     }
 
@@ -589,13 +617,13 @@ async function sendWelcomeEmail() {
         });
 
         if (result.simulated) {
-            showStatus('Settings saved. (Welcome Email Simulated)', 'success');
+            showStatus(a.welcomeSimulated, 'success');
         } else {
-            showStatus('Settings saved & Welcome Email sent!', 'success');
+            showStatus(a.welcomeSent, 'success');
         }
     } catch (e) {
         console.error('Failed to send welcome email:', e);
-        showStatus('Settings saved, but failed to send email.', 'error');
+        showStatus(a.welcomeFailed, 'error');
     }
 }
 
